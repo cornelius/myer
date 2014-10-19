@@ -1,0 +1,5 @@
+= myer
+
+Generate this with
+    myer rdoc
+After you have described your command line interface
