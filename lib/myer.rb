@@ -1,4 +1,4 @@
-require 'myer/version.rb'
+require_relative 'myer/version.rb'
 
-# Add requires for other files you add to your project here, so
-# you just need to require this one file in your bin file
+require_relative 'myer/xinput_parser.rb'
+require_relative 'myer/cli_controller.rb'

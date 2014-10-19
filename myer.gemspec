@@ -3,11 +3,11 @@ require File.join([File.dirname(__FILE__),'lib','myer','version.rb'])
 spec = Gem::Specification.new do |s| 
   s.name = 'myer'
   s.version = Myer::VERSION
-  s.author = 'Your Name Here'
-  s.email = 'your@email.address.com'
-  s.homepage = 'http://your.website.com'
+  s.author = 'Cornelius Schumacher'
+  s.email = 'schumacher@kde.org'
+  s.homepage = 'https://github.com/cornelius/myer'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'A description of your project'
+  s.summary = 'Command line client for Project MySelf'
   s.files = `git ls-files`.split("
 ")
   s.require_paths << 'lib'
@@ -19,5 +19,6 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rake')
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
+  s.add_development_dependency('rspec')
   s.add_runtime_dependency('gli','2.12.2')
 end

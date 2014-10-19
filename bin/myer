@@ -1,17 +1,12 @@
 #!/usr/bin/env ruby
+
 require 'gli'
-begin # XXX: Remove this begin/rescue before distributing your app
-require 'myer'
-rescue LoadError
-  STDERR.puts "In development, you need to use `bundle exec bin/myer` to run your app"
-  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
-  STDERR.puts "Feel free to remove this message from bin/myer now"
-  exit 64
-end
+
+require_relative '../lib/myer'
 
 include GLI::App
 
-program_desc 'Describe your application here'
+program_desc 'Command line client for Project MySelf'
 
 version Myer::VERSION
 
@@ -45,6 +40,12 @@ on_error do |exception|
   # Error logic here
   # return false to skip default error handling
   true
+end
+
+command :track_clicks do |c|
+  c.action do
+    CliController.new.track_clicks
+  end
 end
 
 exit run(ARGV)
