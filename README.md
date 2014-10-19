@@ -1,0 +1,1 @@
+Command line client of [Project MySelf](https://github.com/cornelius/project-myself)
