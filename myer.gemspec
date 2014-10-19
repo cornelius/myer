@@ -8,6 +8,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = 'https://github.com/cornelius/myer'
   s.platform = Gem::Platform::RUBY
   s.summary = 'Command line client for Project MySelf'
+  s.license = 'MIT'
   s.files = `git ls-files`.split("
 ")
   s.require_paths << 'lib'
