@@ -9,7 +9,7 @@ class AdminCliController
   attr_accessor :out
   attr_accessor :config_dir
   attr_accessor :server
-  attr_accessor :admin_id, :password
+  attr_accessor :admin_id, :password, :default_bucket_id
 
   def initialize
     @out = STDOUT
@@ -22,6 +22,9 @@ class AdminCliController
       "default_server" => server,
       server => { "admin_id" => admin_id, "password" => password }
     }
+    if default_bucket_id
+      state[server]["default_bucket_id"] = default_bucket_id
+    end
     File.write(File.join(@config_dir, "myer.config"), state.to_yaml)
   end
 
@@ -33,6 +36,7 @@ class AdminCliController
 
     self.admin_id = server_state["admin_id"]
     self.password = server_state["password"]
+    self.default_bucket_id = server_state["default_bucket_id"]
   end
 
   def register(server, pid)
@@ -71,7 +75,11 @@ class AdminCliController
       json = JSON.parse(response.body)
 
       bucket_id = json["bucket_id"]
+
+      self.default_bucket_id = bucket_id
     end
+
+    write_state
 
     bucket_id
   end

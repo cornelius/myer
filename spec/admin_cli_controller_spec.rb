@@ -17,6 +17,7 @@ describe AdminCliController do
       @controller.server = "example.com"
       @controller.admin_id = "123"
       @controller.password = "456"
+      @controller.default_bucket_id = "890"
 
       @controller.write_state
 
@@ -26,6 +27,7 @@ default_server: example.com
 example.com:
   admin_id: '123'
   password: '456'
+  default_bucket_id: '890'
 EOT
       )
     end
@@ -41,6 +43,7 @@ EOT
       expect(@controller.server).to eq "example.org"
       expect(@controller.admin_id).to eq "abc"
       expect(@controller.password).to eq "def"
+      expect(@controller.default_bucket_id).to eq "ghi"
     end
   end
 
@@ -84,12 +87,18 @@ EOT
          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => '{"bucket_id":"150479372"}', :headers => {})
 
+      config_file_path = nil
       @controller.config_dir = given_directory do
-        given_file("myer.config")
+        config_file_path = given_file("myer.config")
       end
 
       bucket_id = @controller.create_bucket
       expect(bucket_id).to eq "150479372"
+
+      expect(@controller.default_bucket_id).to eq bucket_id
+
+      config = YAML.load_file(config_file_path)
+      expect(config["example.org"]["default_bucket_id"]).to eq bucket_id
     end
   end
 
