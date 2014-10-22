@@ -77,4 +77,19 @@ EOT
       }.to raise_error
     end
   end
+
+  describe "#create_bucket" do
+    it "creates new bucket" do
+      stub_request(:post, "http://abc:def@example.org:4735/data").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => '{"bucket_id":"150479372"}', :headers => {})
+
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      bucket_id = @controller.create_bucket
+      expect(bucket_id).to eq "150479372"
+    end
+  end
 end

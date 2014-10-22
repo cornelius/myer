@@ -55,6 +55,13 @@ command :admin do |c|
       AdminCliController.new.register(args[0], args[1])
     end
   end
+
+  c.desc "Create bucket"
+  c.command :create_bucket do |sc|
+    sc.action do
+      AdminCliController.new.create_bucket
+    end
+  end
 end
 
 desc "Track mouse clicks"

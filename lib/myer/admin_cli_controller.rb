@@ -53,4 +53,25 @@ class AdminCliController
     write_state
   end
 
+  def create_bucket
+    read_state
+
+    http = Net::HTTP.new(server, 4735)
+
+    request = Net::HTTP::Post.new("/data")
+    request.basic_auth(admin_id, password)
+
+    response = http.request(request)
+
+    if response.code != "200"
+      raise "HTTP Error #{response.code} - #{response.body}"
+    else
+      json = JSON.parse(response.body)
+
+      bucket_id = json["bucket_id"]
+    end
+
+    bucket_id
+  end
+
 end
