@@ -100,7 +100,7 @@ class AdminCliController
       json = JSON.parse(response.body)
 
       json.each do |bucket_id|
-        out.puts bucket_id
+        out.puts bucket_id + (bucket_id == default_bucket_id ? " (default)" : "")
       end
     end
   end
