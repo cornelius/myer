@@ -69,6 +69,14 @@ command :admin do |c|
       AdminCliController.new.list_buckets
     end
   end
+
+  c.desc "Write item"
+  c.command :write do |sc|
+    sc.flag :raw, arg_name: "<raw_data>", required: true
+    sc.action do |global_options, options, args|
+      AdminCliController.new.write(options[:raw])
+    end
+  end
 end
 
 desc "Track mouse clicks"

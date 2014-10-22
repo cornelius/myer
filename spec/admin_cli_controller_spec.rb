@@ -120,4 +120,20 @@ EOT
       @controller.list_buckets
     end
   end
+
+  describe "#write_item" do
+    it "writes raw item" do
+      stub_request(:post, "http://abc:def@example.org:4735/data/309029630").
+         with(:body => 'my data', :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => '{"item_id":"504885608","parent_id":"772806166"}', :headers => {})
+
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      item_id = @controller.write_item("309029630", "my data")
+
+      expect(item_id).to eq "504885608"
+    end
+  end
 end
