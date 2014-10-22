@@ -132,4 +132,31 @@ class AdminCliController
     read_state
     write_item(default_bucket_id, content)
   end
+
+  def read_items(bucket_id)
+    read_state
+
+    http = Net::HTTP.new(server, 4735)
+
+    path = "/data/#{bucket_id}"
+    request = Net::HTTP::Get.new(path)
+    request.basic_auth(admin_id, password)
+
+    response = http.request(request)
+
+    if response.code != "200"
+      raise "HTTP Error #{response.code} - #{response.body}"
+    else
+      json = JSON.parse(response.body)
+
+      json.each do |item|
+        out.puts("#{item["item_id"]}: #{item["content"]}")
+      end
+    end
+  end
+
+  def read
+    read_state
+    read_items(default_bucket_id)
+  end
 end

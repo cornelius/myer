@@ -77,6 +77,13 @@ command :admin do |c|
       AdminCliController.new.write(options[:raw])
     end
   end
+
+  c.desc "Read items"
+  c.command :read do |sc|
+    sc.action do
+      AdminCliController.new.read
+    end
+  end
 end
 
 desc "Track mouse clicks"
