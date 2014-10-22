@@ -92,4 +92,23 @@ EOT
       expect(bucket_id).to eq "150479372"
     end
   end
+
+  describe "#list_buckets" do
+    it "lists existing buckets" do
+      stub_request(:get, "http://abc:def@example.org:4735/admin/buckets").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => '["150479372","309029630"]', :headers => {})
+
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      out = double
+      expect(out).to receive(:puts).with("150479372")
+      expect(out).to receive(:puts).with("309029630")
+      @controller.out = out
+
+      @controller.list_buckets
+    end
+  end
 end

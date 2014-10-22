@@ -6,11 +6,13 @@ class AdminCliController
     "myer"
   end
 
+  attr_accessor :out
   attr_accessor :config_dir
   attr_accessor :server
   attr_accessor :admin_id, :password
 
   def initialize
+    @out = STDOUT
     @config_dir = config.home.to_s
   end
 
@@ -72,6 +74,27 @@ class AdminCliController
     end
 
     bucket_id
+  end
+
+  def list_buckets
+    read_state
+
+    http = Net::HTTP.new(server, 4735)
+
+    request = Net::HTTP::Get.new("/admin/buckets")
+    request.basic_auth(admin_id, password)
+
+    response = http.request(request)
+
+    if response.code != "200"
+      raise "HTTP Error #{response.code} - #{response.body}"
+    else
+      json = JSON.parse(response.body)
+
+      json.each do |bucket_id|
+        out.puts bucket_id
+      end
+    end
   end
 
 end

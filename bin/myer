@@ -62,6 +62,13 @@ command :admin do |c|
       AdminCliController.new.create_bucket
     end
   end
+
+  c.desc "List all existing buckets"
+  c.command :list_buckets do |sc|
+    sc.action do
+      AdminCliController.new.list_buckets
+    end
+  end
 end
 
 desc "Track mouse clicks"
