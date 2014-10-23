@@ -72,9 +72,13 @@ command :admin do |c|
 
   c.desc "Write item"
   c.command :write do |sc|
-    sc.flag :raw, arg_name: "<raw_data>", required: true
+    sc.switch :raw, desc: "Write unencrypted"
     sc.action do |global_options, options, args|
-      AdminCliController.new.write(options[:raw])
+      if options[:raw]
+        AdminCliController.new.write_raw(STDIN.read)
+      else
+        AdminCliController.new.write(STDIN.read)
+      end
     end
   end
 

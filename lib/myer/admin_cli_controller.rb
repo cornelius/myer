@@ -79,6 +79,13 @@ class AdminCliController
       self.default_bucket_id = bucket_id
     end
 
+    ticket = Ticket.new
+    ticket.bucket_id = bucket_id
+    ticket.key = Crypto.new.generate_passphrase
+
+    store = TicketStore.new(config_dir)
+    store.save_ticket(ticket)
+
     write_state
 
     bucket_id
@@ -128,9 +135,23 @@ class AdminCliController
     item_id
   end
 
-  def write(content)
+  def write_raw(content)
     read_state
     write_item(default_bucket_id, content)
+  end
+
+  def write(content)
+    read_state
+
+    store = TicketStore.new(config_dir)
+    ticket = store.load_ticket(default_bucket_id)
+
+    crypto = Crypto.new
+    crypto.passphrase = ticket.key
+
+    encrypted_content = crypto.encrypt(content)
+
+    write_item(default_bucket_id, encrypted_content)
   end
 
   def read_items(bucket_id)

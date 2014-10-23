@@ -99,6 +99,9 @@ EOT
 
       config = YAML.load_file(config_file_path)
       expect(config["example.org"]["default_bucket_id"]).to eq bucket_id
+
+      ticket_file_path = File.join(@controller.config_dir, "secret-ticket-150479372.json")
+      expect(File.exist?(ticket_file_path)).to be true
     end
   end
 
@@ -134,6 +137,19 @@ EOT
       item_id = @controller.write_item("309029630", "my data")
 
       expect(item_id).to eq "504885608"
+    end
+  end
+
+  describe "#write" do
+    it "writes encrypted item" do
+      @controller.read_state
+      bucket_id = @controller.default_bucket_id
+
+      allow_any_instance_of(Crypto).to receive(:encrypt).and_return("encrypted")
+
+      expect(@controller).to receive(:write_item).with(bucket_id, "encrypted")
+
+      @controller.write("some data")
     end
   end
 

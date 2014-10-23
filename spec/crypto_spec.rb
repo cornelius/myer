@@ -10,6 +10,7 @@ describe Crypto do
     passphrase = @crypto.generate_passphrase
 
     expect(passphrase.length).to be > 16
+    expect(passphrase).to_not match /\n/
   end
 
   it "encrypts and decrypts" do
