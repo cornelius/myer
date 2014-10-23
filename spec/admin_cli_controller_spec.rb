@@ -142,6 +142,11 @@ EOT
 
   describe "#write" do
     it "writes encrypted item" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+        given_file("secret-ticket-987654321.json")
+      end
+
       @controller.read_state
       bucket_id = @controller.default_bucket_id
 
