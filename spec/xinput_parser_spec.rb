@@ -38,6 +38,8 @@ EOT
     output = double
     expect(output).to receive(:puts).with("Click").exactly(3).times
     
-    @parser.parse_clicks(input, output)
+    @parser.parse_clicks(input) do
+      output.puts("Click")
+    end
   end 
 end

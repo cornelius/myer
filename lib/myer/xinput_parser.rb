@@ -9,7 +9,9 @@ class XinputParser
       mouse_id = parse_list(`xinput list`)
     end
     PTY.spawn("xinput test #{mouse_id}") do |r, w, pid|
-      parse_clicks(r, STDOUT)
+      parse_clicks(r) do
+        yield
+      end
     end
   end
   
@@ -22,10 +24,10 @@ class XinputParser
     nil
   end
   
-  def parse_clicks(input,output)
+  def parse_clicks(input)
     input.each_line do |line|
       if line =~ /^button press/
-        output.puts("Click")
+        yield
       end
     end
   end
