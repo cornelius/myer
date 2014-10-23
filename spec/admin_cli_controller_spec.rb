@@ -188,4 +188,33 @@ EOT
       expect(@controller.crypto.passphrase).to eq "secret key"
     end
   end
+
+  describe "#write_value" do
+    it "writes value" do
+      value = 42
+
+      expect(@controller).to receive(:write_item)
+      @controller.write_value(value)
+    end
+  end
+
+  describe "#create_payload" do
+    it "creates payload" do
+      value = "some data"
+      payload_string = @controller.create_payload(value)
+      payload = JSON.parse(payload_string)
+      expect(payload["id"].length).to be > 6
+      expect(payload["written_at"]).to match /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ$/
+      expect(payload.has_key?("tag")).to be false
+      expect(payload["data"]).to eq "some data"
+    end
+
+    it "creates payload with tag" do
+      value = "some data"
+      payload_string = @controller.create_payload(value, "title")
+      payload = JSON.parse(payload_string)
+      expect(payload["tag"]).to eq "title"
+      expect(payload["data"]).to eq "some data"
+    end
+  end
 end

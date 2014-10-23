@@ -187,4 +187,18 @@ class AdminCliController
     read_state
     read_items(default_bucket_id)
   end
+
+  def create_payload(value, tag = nil)
+    payload = {}
+    payload["id"] = rand(100000000).to_s
+    payload["written_at"] = Time.now.utc.strftime("%FT%TZ")
+    payload["tag"] = tag if tag
+    payload["data"] = value.to_s
+    JSON.generate(payload)
+  end
+
+  def write_value(value, tag = nil)
+    write(create_payload(value, tag))
+  end
+
 end

@@ -82,6 +82,15 @@ command :admin do |c|
     end
   end
 
+  c.desc "Write value"
+  c.arg :value
+  c.command :write_value do |sc|
+    sc.flag :tag, desc: "Add tag as meta data"
+    sc.action do |global_options, options, args|
+      AdminCliController.new.write_value(args[0], options[:tag])
+    end
+  end
+
   c.desc "Read items"
   c.command :read do |sc|
     sc.action do
