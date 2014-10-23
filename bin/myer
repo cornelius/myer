@@ -48,10 +48,7 @@ command :admin do |c|
   c.arg :server
   c.arg :pin
   c.command :register do |register|
-    register.action do |g, o, args|
-      if args.length < 2
-        raise "You must specifcy server and pid"
-      end
+    register.action do |global_options, options, args|
       AdminCliController.new.register(args[0], args[1])
     end
   end
