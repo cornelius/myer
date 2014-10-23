@@ -4,8 +4,10 @@ class XinputParser
 
   attr_accessor :mouse_id
   
-  def track_clicks
-    mouse_id = parse_list(`xinput list`)
+  def track_clicks(mouse_id=nil)
+    if !mouse_id
+      mouse_id = parse_list(`xinput list`)
+    end
     PTY.spawn("xinput test #{mouse_id}") do |r, w, pid|
       parse_clicks(r, STDOUT)
     end

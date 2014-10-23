@@ -91,9 +91,10 @@ command :admin do |c|
 end
 
 desc "Track mouse clicks"
+arg :mouse_id, :optional
 command :track_clicks do |c|
-  c.action do
-    CliController.new.track_clicks
+  c.action do |global_options, options, args|
+    CliController.new.track_clicks(args[0])
   end
 end
 
