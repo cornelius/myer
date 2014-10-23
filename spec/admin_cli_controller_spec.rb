@@ -43,7 +43,7 @@ EOT
       expect(@controller.server).to eq "example.org"
       expect(@controller.admin_id).to eq "abc"
       expect(@controller.password).to eq "def"
-      expect(@controller.default_bucket_id).to eq "ghi"
+      expect(@controller.default_bucket_id).to eq "987654321"
     end
   end
 
@@ -155,20 +155,32 @@ EOT
 
   describe "#read_items" do
     it "reads raw items" do
-      stub_request(:get, "http://abc:def@example.org:4735/data/309029630").
+      bucket_id = "987654321"
+      stub_request(:get, "http://abc:def@example.org:4735/data/#{bucket_id}").
          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => '[{"item_id":"263800370","parent_id":"271086077","content":"more data"},{"item_id":"271086077","parent_id":"","content":"my data"}]', :headers => {})
 
       @controller.config_dir = given_directory do
         given_file("myer.config")
+        given_file("secret-ticket-#{bucket_id}.json")
       end
 
+      class TestCrypto < Crypto
+        def decrypt(cipher)
+          "A#{cipher}O"
+        end
+      end
+
+      @controller.crypto = TestCrypto.new
+
       out = double
-      expect(out).to receive(:puts).with("263800370: more data")
-      expect(out).to receive(:puts).with("271086077: my data")
+      expect(out).to receive(:puts).with("263800370: Amore dataO")
+      expect(out).to receive(:puts).with("271086077: Amy dataO")
       @controller.out = out
 
-      @controller.read_items("309029630")
+      @controller.read_items(bucket_id)
+
+      expect(@controller.crypto.passphrase).to eq "secret key"
     end
   end
 end

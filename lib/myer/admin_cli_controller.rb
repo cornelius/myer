@@ -6,7 +6,7 @@ class AdminCliController
     "myer"
   end
 
-  attr_accessor :out
+  attr_accessor :out, :crypto
   attr_accessor :config_dir
   attr_accessor :server
   attr_accessor :admin_id, :password, :default_bucket_id
@@ -14,6 +14,7 @@ class AdminCliController
   def initialize
     @out = STDOUT
     @config_dir = config.home.to_s
+    @crypto = Crypto.new
   end
 
   def write_state
@@ -81,7 +82,7 @@ class AdminCliController
 
     ticket = Ticket.new
     ticket.bucket_id = bucket_id
-    ticket.key = Crypto.new.generate_passphrase
+    ticket.key = @crypto.generate_passphrase
 
     store = TicketStore.new(config_dir)
     store.save_ticket(ticket)
@@ -146,16 +147,20 @@ class AdminCliController
     store = TicketStore.new(config_dir)
     ticket = store.load_ticket(default_bucket_id)
 
-    crypto = Crypto.new
-    crypto.passphrase = ticket.key
+    @crypto.passphrase = ticket.key
 
-    encrypted_content = crypto.encrypt(content)
+    encrypted_content = @crypto.encrypt(content)
 
     write_item(default_bucket_id, encrypted_content)
   end
 
   def read_items(bucket_id)
     read_state
+
+    store = TicketStore.new(config_dir)
+    ticket = store.load_ticket(default_bucket_id)
+
+    @crypto.passphrase = ticket.key
 
     http = Net::HTTP.new(server, 4735)
 
@@ -171,7 +176,9 @@ class AdminCliController
       json = JSON.parse(response.body)
 
       json.each do |item|
-        out.puts("#{item["item_id"]}: #{item["content"]}")
+        item_id = item["item_id"]
+        content = @crypto.decrypt(item["content"])
+        out.puts("#{item_id}: #{content}")
       end
     end
   end

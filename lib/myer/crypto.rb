@@ -15,7 +15,7 @@ class Crypto
       ciphertext = stdout.read
 
       if !wait_thr.value.success?
-        raise "Encryption failed"
+        raise "Encryption failed #{stderr.read}"
       end
     end
     ciphertext
@@ -30,7 +30,7 @@ class Crypto
       plaintext = stdout.read
 
       if !wait_thr.value.success?
-        raise "Decryption failed"
+        raise "Decryption failed: #{stderr.read}"
       end
     end
     plaintext.chomp
