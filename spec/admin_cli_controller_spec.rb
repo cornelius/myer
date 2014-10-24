@@ -217,4 +217,20 @@ EOT
       expect(payload["data"]).to eq "some data"
     end
   end
+
+  describe "#status" do
+    it "gives out status" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      out = double
+      @controller.out = out
+
+      expect(out).to receive(:puts).with(/example.org/)
+      expect(out).to receive(:puts).with(/987654321/)
+
+      @controller.status
+    end
+  end
 end

@@ -94,6 +94,13 @@ command :admin do |c|
       AdminCliController.new.read
     end
   end
+
+  c.desc "Print status"
+  c.command :status do |sc|
+    sc.action do
+      AdminCliController.new.status
+    end
+  end
 end
 
 desc "Track mouse clicks"

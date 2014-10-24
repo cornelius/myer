@@ -200,4 +200,11 @@ class AdminCliController
   def write_value(value, tag = nil)
     write(create_payload(value, tag))
   end
+
+  def status
+    read_state
+
+    out.puts "Server: #{server}"
+    out.puts "Bucket: #{default_bucket_id}"
+  end
 end
