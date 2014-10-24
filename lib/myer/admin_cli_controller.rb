@@ -201,6 +201,11 @@ class AdminCliController
     write(create_payload(value, tag))
   end
 
+  def write_pair(value1, value2)
+    json = [ value1, value2 ]
+    write_value(JSON.generate(json))
+  end
+
   def status
     read_state
 

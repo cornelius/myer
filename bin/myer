@@ -88,6 +88,15 @@ command :admin do |c|
     end
   end
 
+  c.desc "Write pair of values"
+  c.arg :value1
+  c.arg :value2
+  c.command :write_pair do |sc|
+    sc.action do |global_options, options, args|
+      AdminCliController.new.write_pair(args[0], args[1])
+    end
+  end
+
   c.desc "Read items"
   c.command :read do |sc|
     sc.action do

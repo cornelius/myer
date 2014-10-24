@@ -198,6 +198,14 @@ EOT
     end
   end
 
+  describe "#write_pair" do
+    it "writes value pair" do
+      expect(@controller).to receive(:write_value).with('["2014-10-24","42"]')
+
+      @controller.write_pair("2014-10-24", "42")
+    end
+  end
+
   describe "#create_payload" do
     it "creates payload" do
       value = "some data"
