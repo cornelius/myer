@@ -200,5 +200,4 @@ class AdminCliController
   def write_value(value, tag = nil)
     write(create_payload(value, tag))
   end
-
 end
