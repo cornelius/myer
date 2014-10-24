@@ -173,13 +173,18 @@ class AdminCliController
     if response.code != "200"
       raise "HTTP Error #{response.code} - #{response.body}"
     else
+      inner_items = []
+
       json = JSON.parse(response.body)
 
       json.each do |item|
         item_id = item["item_id"]
         content = @crypto.decrypt(item["content"])
+        inner_items.unshift(content)
         out.puts("#{item_id}: #{content}")
       end
+
+      return inner_items
     end
   end
 
@@ -211,5 +216,22 @@ class AdminCliController
 
     out.puts "Server: #{server}"
     out.puts "Bucket: #{default_bucket_id}"
+  end
+
+  def plot
+    read_state
+
+    csv_file = Tempfile.new("myer_plot_data")
+    content = Content.new
+
+    inner_items = read
+    inner_items.each do |inner_item|
+      content.add(inner_item)
+    end
+
+    content.write_as_csv(csv_file.path)
+
+    plot = Plot.new
+    plot.show(csv_file.path)
   end
 end

@@ -183,9 +183,12 @@ EOT
       expect(out).to receive(:puts).with("271086077: Amy dataO")
       @controller.out = out
 
-      @controller.read_items(bucket_id)
+      inner_items = @controller.read_items(bucket_id)
 
       expect(@controller.crypto.passphrase).to eq "secret key"
+      expect(inner_items.count).to eq 2
+      expect(inner_items[0]).to eq "Amy dataO"
+      expect(inner_items[1]).to eq "Amore dataO"
     end
   end
 
@@ -239,6 +242,21 @@ EOT
       expect(out).to receive(:puts).with(/987654321/)
 
       @controller.status
+    end
+  end
+
+  describe "#plot" do
+    it "plots pairs of date and value" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+        given_file("secret-ticket-987654321.json")
+      end
+
+      expect(@controller).to receive(:read_items).and_return(['{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}'])
+
+      expect_any_instance_of(Plot).to receive(:show)
+
+      @controller.plot
     end
   end
 end

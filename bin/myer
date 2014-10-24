@@ -110,6 +110,13 @@ command :admin do |c|
       AdminCliController.new.status
     end
   end
+
+  c.desc "Plot data"
+  c.command :plot do |sc|
+    sc.action do
+      AdminCliController.new.plot
+    end
+  end
 end
 
 desc "Track mouse clicks"
