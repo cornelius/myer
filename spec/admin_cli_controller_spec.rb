@@ -18,6 +18,8 @@ describe AdminCliController do
       @controller.admin_id = "123"
       @controller.password = "456"
       @controller.default_bucket_id = "890"
+      @controller.user_id = "abc"
+      @controller.user_password = "xyz"
 
       @controller.write_state
 
@@ -27,6 +29,8 @@ default_server: example.com
 example.com:
   admin_id: '123'
   password: '456'
+  user_id: abc
+  user_password: xyz
   default_bucket_id: '890'
 EOT
       )
@@ -34,7 +38,7 @@ EOT
 
     it "reads state from config file" do
       config_dir = given_directory do
-        given_file "myer.config"
+        given_file "myer.config", from: "myer-full.config"
       end
       @controller.config_dir = config_dir
 
@@ -43,6 +47,8 @@ EOT
       expect(@controller.server).to eq "example.org"
       expect(@controller.admin_id).to eq "abc"
       expect(@controller.password).to eq "def"
+      expect(@controller.user_id).to eq "ddd"
+      expect(@controller.user_password).to eq "ggg"
       expect(@controller.default_bucket_id).to eq "987654321"
     end
   end
@@ -257,6 +263,30 @@ EOT
       expect_any_instance_of(Plot).to receive(:show)
 
       @controller.plot
+    end
+  end
+
+  describe "register_user" do
+    it "registers as user client" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      stub_request(:post, "http://abc:def@example.org:4735/tokens").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => '{"token":"1800927539516"}', :headers => {})
+
+      stub_request(:post, "http://example.org:4735/register/1800927539516").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => '{"user_id":"157610723","user_password":"626078090"}', :headers => {})
+
+      expect(@controller.user_id).to be(nil)
+      expect(@controller.user_password).to be(nil)
+
+      @controller.register_user
+
+      expect(@controller.user_id).to eq "157610723"
+      expect(@controller.user_password).to eq "626078090"
     end
   end
 end

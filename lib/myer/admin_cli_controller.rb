@@ -10,6 +10,7 @@ class AdminCliController
   attr_accessor :config_dir
   attr_accessor :server
   attr_accessor :admin_id, :password, :default_bucket_id
+  attr_accessor :user_id, :user_password
 
   def initialize
     @out = STDOUT
@@ -21,8 +22,12 @@ class AdminCliController
     FileUtils.mkdir_p(@config_dir)
     state = {
       "default_server" => server,
-      server => { "admin_id" => admin_id, "password" => password }
+      server => {
+        "admin_id" => admin_id, "password" => password
+      }
     }
+    state[server]["user_id"] = user_id if user_id
+    state[server]["user_password"] = user_password if user_password
     if default_bucket_id
       state[server]["default_bucket_id"] = default_bucket_id
     end
@@ -37,6 +42,8 @@ class AdminCliController
 
     self.admin_id = server_state["admin_id"]
     self.password = server_state["password"]
+    self.user_id = server_state["user_id"]
+    self.user_password = server_state["user_password"]
     self.default_bucket_id = server_state["default_bucket_id"]
   end
 
@@ -233,5 +240,41 @@ class AdminCliController
 
     plot = Plot.new
     plot.show(csv_file.path)
+  end
+
+  def register_user
+    read_state
+
+    http = Net::HTTP.new(server, 4735)
+
+    path = "/tokens"
+    request = Net::HTTP::Post.new(path)
+    request.basic_auth(admin_id, password)
+
+    response = http.request(request)
+
+    if response.code != "200"
+      raise "HTTP Error #{response.code} - #{response.body}"
+    else
+      json = JSON.parse(response.body)
+
+      token = json["token"]
+    end
+
+    path = "/register/" + token
+    request = Net::HTTP::Post.new(path)
+
+    response = http.request(request)
+
+    if response.code != "200"
+      raise "HTTP Error #{response.code} - #{response.body}"
+    else
+      json = JSON.parse(response.body)
+
+      self.user_id = json["user_id"]
+      self.user_password = json["user_password"]
+
+      write_state
+    end
   end
 end
