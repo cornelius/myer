@@ -127,7 +127,7 @@ class AdminCliController
 
     path = "/data/#{bucket_id}"
     request = Net::HTTP::Post.new(path)
-    request.basic_auth(admin_id, password)
+    request.basic_auth(user_id, user_password)
     request.body = content
 
     response = http.request(request)
@@ -173,7 +173,7 @@ class AdminCliController
 
     path = "/data/#{bucket_id}"
     request = Net::HTTP::Get.new(path)
-    request.basic_auth(admin_id, password)
+    request.basic_auth(user_id, user_password)
 
     response = http.request(request)
 

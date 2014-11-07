@@ -132,12 +132,12 @@ EOT
 
   describe "#write_item" do
     it "writes raw item" do
-      stub_request(:post, "http://abc:def@example.org:4735/data/309029630").
+      stub_request(:post, "http://ddd:ggg@example.org:4735/data/309029630").
          with(:body => 'my data', :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => '{"item_id":"504885608","parent_id":"772806166"}', :headers => {})
 
       @controller.config_dir = given_directory do
-        given_file("myer.config")
+        given_file("myer.config", from: "myer-full.config")
       end
 
       item_id = @controller.write_item("309029630", "my data")
@@ -167,12 +167,12 @@ EOT
   describe "#read_items" do
     it "reads raw items" do
       bucket_id = "987654321"
-      stub_request(:get, "http://abc:def@example.org:4735/data/#{bucket_id}").
+      stub_request(:get, "http://ddd:ggg@example.org:4735/data/#{bucket_id}").
          with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
          to_return(:status => 200, :body => '[{"item_id":"263800370","parent_id":"271086077","content":"more data"},{"item_id":"271086077","parent_id":"","content":"my data"}]', :headers => {})
 
       @controller.config_dir = given_directory do
-        given_file("myer.config")
+        given_file("myer.config", from: "myer-full.config")
         given_file("secret-ticket-#{bucket_id}.json")
       end
 
