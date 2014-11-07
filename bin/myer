@@ -60,54 +60,10 @@ command :admin do |c|
     end
   end
 
-  c.desc "Create bucket"
-  c.command :create_bucket do |sc|
-    sc.action do
-      AdminCliController.new.create_bucket
-    end
-  end
-
   c.desc "List all existing buckets"
   c.command :list_buckets do |sc|
     sc.action do
       AdminCliController.new.list_buckets
-    end
-  end
-
-  c.desc "Write item"
-  c.command :write do |sc|
-    sc.switch :raw, desc: "Write unencrypted"
-    sc.action do |global_options, options, args|
-      if options[:raw]
-        AdminCliController.new.write_raw(STDIN.read)
-      else
-        AdminCliController.new.write(STDIN.read)
-      end
-    end
-  end
-
-  c.desc "Write value"
-  c.arg :value
-  c.command :write_value do |sc|
-    sc.flag :tag, desc: "Add tag as meta data"
-    sc.action do |global_options, options, args|
-      AdminCliController.new.write_value(args[0], options[:tag])
-    end
-  end
-
-  c.desc "Write pair of values"
-  c.arg :value1
-  c.arg :value2
-  c.command :write_pair do |sc|
-    sc.action do |global_options, options, args|
-      AdminCliController.new.write_pair(args[0], args[1])
-    end
-  end
-
-  c.desc "Read items"
-  c.command :read do |sc|
-    sc.action do
-      AdminCliController.new.read
     end
   end
 
@@ -117,13 +73,6 @@ command :admin do |c|
       AdminCliController.new.status
     end
   end
-
-  c.desc "Plot data"
-  c.command :plot do |sc|
-    sc.action do
-      AdminCliController.new.plot
-    end
-  end
 end
 
 desc "Track mouse clicks"
@@ -131,6 +80,57 @@ arg :mouse_id, :optional
 command :track_clicks do |c|
   c.action do |global_options, options, args|
     CliController.new.track_clicks(args[0])
+  end
+end
+
+desc "Create bucket"
+command :create_bucket do |c|
+  c.action do
+    CliController.new.create_bucket
+  end
+end
+
+desc "Write item"
+command :write do |c|
+  c.switch :raw, desc: "Write unencrypted"
+  c.action do |global_options, options, args|
+    if options[:raw]
+      CliController.new.write_raw(STDIN.read)
+    else
+      CliController.new.write(STDIN.read)
+    end
+  end
+end
+
+desc "Write value"
+arg :value
+command :write_value do |c|
+  c.flag :tag, desc: "Add tag as meta data"
+  c.action do |global_options, options, args|
+    CliController.new.write_value(args[0], options[:tag])
+  end
+end
+
+desc "Write pair of values"
+arg :value1
+arg :value2
+command :write_pair do |c|
+  c.action do |global_options, options, args|
+    CliController.new.write_pair(args[0], args[1])
+  end
+end
+
+desc "Read items"
+command :read do |c|
+  c.action do
+    CliController.new.read
+  end
+end
+
+desc "Plot data"
+command :plot do |c|
+  c.action do
+    CliController.new.plot
   end
 end
 
