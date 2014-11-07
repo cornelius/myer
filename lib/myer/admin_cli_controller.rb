@@ -73,7 +73,7 @@ class AdminCliController
     http = Net::HTTP.new(server, 4735)
 
     request = Net::HTTP::Post.new("/data")
-    request.basic_auth(admin_id, password)
+    request.basic_auth(user_id, user_password)
 
     response = http.request(request)
 
@@ -254,7 +254,7 @@ class AdminCliController
     response = http.request(request)
 
     if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
+      raise "#{path} HTTP Error #{response.code} - #{response.body}"
     else
       json = JSON.parse(response.body)
 
@@ -267,7 +267,7 @@ class AdminCliController
     response = http.request(request)
 
     if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
+      raise "#{path} HTTP Error #{response.code} - #{response.body}"
     else
       json = JSON.parse(response.body)
 
