@@ -90,6 +90,13 @@ command :create_bucket do |c|
   end
 end
 
+desc "Create token"
+command :create_token do |c|
+  c.action do
+    CliController.new.create_token
+  end
+end
+
 desc "Write item"
 command :write do |c|
   c.switch :raw, desc: "Write unencrypted"

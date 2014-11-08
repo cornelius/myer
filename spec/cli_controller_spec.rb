@@ -169,4 +169,24 @@ describe CliController do
       @controller.plot
     end
   end
+
+  describe "#create_token" do
+    it "creates token" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config", from: "myer-full.config")
+      end
+
+      expected_token = "12345677890"
+      expect_any_instance_of(MySelf::Api).to receive(:create_token)
+        .and_return(expected_token)
+
+      out = double
+      expect(out).to receive(:puts).with(/#{expected_token}/).at_least(:once)
+      @controller.out = out
+
+      token = @controller.create_token
+
+      expect(token).to eq expected_token
+    end
+  end
 end

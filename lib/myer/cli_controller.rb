@@ -42,6 +42,18 @@ class CliController
     bucket_id
   end
 
+  def create_token
+    read_state
+
+    token = api.create_token
+
+    out.puts("Created token: #{token}")
+    out.puts("Use this token to register another client, " +
+             "e.g. with `myer register #{server} #{token}`.")
+
+    token
+  end
+
   def write_item(bucket_id, content)
     read_state
 
