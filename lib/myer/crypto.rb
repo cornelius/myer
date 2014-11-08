@@ -7,7 +7,7 @@ class Crypto
   end
 
   def encrypt(plaintext)
-    cmd = "gpg --batch --armor --passphrase #{passphrase} --symmetric"
+    cmd = "gpg --batch --armor --passphrase '#{passphrase}' --symmetric"
     ciphertext = nil
     Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
       stdin.puts(plaintext)
@@ -22,7 +22,7 @@ class Crypto
   end
 
   def decrypt(ciphertext)
-    cmd = "gpg --batch --passphrase #{passphrase} --decrypt"
+    cmd = "gpg --batch --passphrase '#{passphrase}' --decrypt"
     plaintext = nil
     Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
       stdin.puts(ciphertext)
