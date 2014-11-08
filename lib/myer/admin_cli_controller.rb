@@ -8,22 +8,17 @@ class AdminCliController
     initialize_config
   end
 
+  def api
+    api = MySelf::Api.new
+    api.server = server
+    api.user = admin_id
+    api.password = password
+    api
+  end
+
   def register(server, pid)
-    http = Net::HTTP.new(server, 4735)
-
-    request = Net::HTTP::Post.new("/admin/register/#{pid}")
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
-    else
-      json = JSON.parse(response.body)
-
-      self.server = server
-      self.admin_id = json["admin_id"]
-      self.password = json["password"]
-    end
+    self.server = server
+    self.admin_id, self.password = api.admin_register(pid)
 
     write_state
   end
@@ -31,21 +26,10 @@ class AdminCliController
   def list_buckets
     read_state
 
-    http = Net::HTTP.new(server, 4735)
+    buckets = api.admin_list_buckets
 
-    request = Net::HTTP::Get.new("/admin/buckets")
-    request.basic_auth(admin_id, password)
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
-    else
-      json = JSON.parse(response.body)
-
-      json.each do |bucket_id|
-        out.puts bucket_id + (bucket_id == default_bucket_id ? " (default)" : "")
-      end
+    buckets.each do |bucket_id|
+      out.puts bucket_id + (bucket_id == default_bucket_id ? " (default)" : "")
     end
   end
 
@@ -59,36 +43,9 @@ class AdminCliController
   def register_user
     read_state
 
-    http = Net::HTTP.new(server, 4735)
+    token = api.create_token
+    self.user_id, self.user_password = api.register(token)
 
-    path = "/tokens"
-    request = Net::HTTP::Post.new(path)
-    request.basic_auth(admin_id, password)
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "#{path} HTTP Error #{response.code} - #{response.body}"
-    else
-      json = JSON.parse(response.body)
-
-      token = json["token"]
-    end
-
-    path = "/register/" + token
-    request = Net::HTTP::Post.new(path)
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "#{path} HTTP Error #{response.code} - #{response.body}"
-    else
-      json = JSON.parse(response.body)
-
-      self.user_id = json["user_id"]
-      self.user_password = json["user_password"]
-
-      write_state
-    end
+    write_state
   end
 end
