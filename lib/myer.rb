@@ -5,16 +5,20 @@ require "open3"
 require "tempfile"
 require "securerandom"
 
-require_relative "myer/version.rb"
+def require_myer(file)
+  require_relative("myer/#{file}")
+end
 
-require_relative "myer/config.rb"
-require_relative "myer/xinput_parser.rb"
-require_relative "myer/cli_controller.rb"
-require_relative "myer/admin_cli_controller.rb"
-require_relative "myer/crypto.rb"
-require_relative "myer/ticket.rb"
-require_relative "myer/ticket_store.rb"
-require_relative "myer/proc_net_parser.rb"
-require_relative "myer/content.rb"
-require_relative "myer/plot.rb"
-require_relative "myer/api.rb"
+require_myer "version"
+
+require_myer "config"
+require_myer "xinput_parser"
+require_myer "cli_controller"
+require_myer "admin_cli_controller"
+require_myer "crypto"
+require_myer "ticket"
+require_myer "ticket_store"
+require_myer "proc_net_parser"
+require_myer "content"
+require_myer "plot"
+require_myer "api"
