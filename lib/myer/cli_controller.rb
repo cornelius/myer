@@ -9,6 +9,14 @@ class CliController
     @crypto = Crypto.new
   end
 
+  def api
+    api = MySelf::Api.new
+    api.server = server
+    api.user = user_id
+    api.password = user_password
+    api
+  end
+
   def track_clicks(mouse_id)
     XinputParser.new.track_clicks(mouse_id) do
       puts "CLICK"
@@ -18,22 +26,9 @@ class CliController
   def create_bucket
     read_state
 
-    http = Net::HTTP.new(server, 4735)
+    bucket_id = api.create_bucket
 
-    request = Net::HTTP::Post.new("/data")
-    request.basic_auth(user_id, user_password)
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
-    else
-      json = JSON.parse(response.body)
-
-      bucket_id = json["bucket_id"]
-
-      self.default_bucket_id = bucket_id
-    end
+    self.default_bucket_id = bucket_id
 
     ticket = Ticket.new
     ticket.bucket_id = bucket_id
@@ -50,24 +45,7 @@ class CliController
   def write_item(bucket_id, content)
     read_state
 
-    http = Net::HTTP.new(server, 4735)
-
-    path = "/data/#{bucket_id}"
-    request = Net::HTTP::Post.new(path)
-    request.basic_auth(user_id, user_password)
-    request.body = content
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
-    else
-      json = JSON.parse(response.body)
-
-      item_id = json["item_id"]
-    end
-
-    item_id
+    return api.create_item(bucket_id, content)
   end
 
   def write_raw(content)
@@ -96,30 +74,16 @@ class CliController
 
     @crypto.passphrase = ticket.key
 
-    http = Net::HTTP.new(server, 4735)
+    items = api.get_items(bucket_id)
 
-    path = "/data/#{bucket_id}"
-    request = Net::HTTP::Get.new(path)
-    request.basic_auth(user_id, user_password)
-
-    response = http.request(request)
-
-    if response.code != "200"
-      raise "HTTP Error #{response.code} - #{response.body}"
-    else
-      inner_items = []
-
-      json = JSON.parse(response.body)
-
-      json.each do |item|
-        item_id = item["item_id"]
-        content = @crypto.decrypt(item["content"])
-        inner_items.unshift(content)
-        out.puts("#{item_id}: #{content}")
-      end
-
-      return inner_items
+    content_list = []
+    items.each do |item|
+      content = @crypto.decrypt(item.content)
+      out.puts("#{item.id}: #{content}")
+      content_list.push(content)
     end
+
+    content_list
   end
 
   def read
