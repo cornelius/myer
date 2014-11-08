@@ -3,12 +3,10 @@ module MySelf
     attr_accessor :server
     attr_accessor :user, :password
 
-    def post(path, content = nil, auth_enabled = true)
+    def http_request
       http = Net::HTTP.new(server, 4735)
 
-      request = Net::HTTP::Post.new(path)
-      request.basic_auth(user, password) if auth_enabled
-      request.body = content if content
+      request = yield
 
       response = http.request(request)
 
@@ -19,18 +17,20 @@ module MySelf
       end
     end
 
+    def post(path, content = nil, auth_enabled = true)
+      http_request do
+        request = Net::HTTP::Post.new(path)
+        request.basic_auth(user, password) if auth_enabled
+        request.body = content if content
+        request
+      end
+    end
+
     def get(path)
-      http = Net::HTTP.new(server, 4735)
-
-      request = Net::HTTP::Get.new(path)
-      request.basic_auth(user, password)
-
-      response = http.request(request)
-
-      if response.code != "200"
-        raise "#{path} HTTP Error #{response.code} - #{response.body}"
-      else
-        return JSON.parse(response.body)
+      http_request do
+        request = Net::HTTP::Get.new(path)
+        request.basic_auth(user, password)
+        request
       end
     end
 
