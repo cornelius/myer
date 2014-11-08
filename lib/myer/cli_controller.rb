@@ -93,7 +93,7 @@ class CliController
 
   def create_payload(value, tag = nil)
     payload = {}
-    payload["id"] = rand(100000000).to_s
+    payload["id"] = SecureRandom.hex
     payload["written_at"] = Time.now.utc.strftime("%FT%TZ")
     payload["tag"] = tag if tag
     payload["data"] = value.to_s

@@ -3,6 +3,7 @@ require "json"
 require "xdg"
 require "open3"
 require "tempfile"
+require "securerandom"
 
 require_relative "myer/version.rb"
 
