@@ -17,9 +17,8 @@ describe AdminCliController do
     it "registers admin client" do
       @controller.config_dir = given_directory
 
-      stub_request(:post, "http://example.com:4735/admin/register/1234").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '{"admin_id":"181504088","password":"683271947"}', :headers => {})
+      expect_any_instance_of(MySelf::Api).to receive(:admin_register).with("1234")
+        .and_return(["181504088", "683271947"])
 
       @controller.register "example.com", "1234"
 
@@ -35,23 +34,12 @@ example.com:
 EOT
       )
     end
-
-    it "fails when admin client is already registered" do
-      stub_request(:post, "http://example.com:4735/admin/register/1234").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 400, :body => 'Client is already registered', :headers => {})
-
-      expect {
-        @controller.register "example.com", "1234"
-      }.to raise_error
-    end
   end
 
   describe "#list_buckets" do
     it "lists existing buckets" do
-      stub_request(:get, "http://abc:def@example.org:4735/admin/buckets").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '["150479372","309029630"]', :headers => {})
+      expect_any_instance_of(MySelf::Api).to receive(:admin_list_buckets)
+        .and_return(["150479372","309029630"])
 
       @controller.config_dir = given_directory do
         given_file("myer.config")
@@ -88,21 +76,19 @@ EOT
         given_file("myer.config")
       end
 
-      stub_request(:post, "http://abc:def@example.org:4735/tokens").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '{"token":"1800927539516"}', :headers => {})
-
-      stub_request(:post, "http://example.org:4735/register/1800927539516").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '{"user_id":"157610723","user_password":"626078090"}', :headers => {})
+      token = "1800927539516"
+      expect_any_instance_of(MySelf::Api).to receive(:create_token)
+        .and_return(token)
+      expect_any_instance_of(MySelf::Api).to receive(:register).with(token)
+        .and_return(["123","456"])
 
       expect(@controller.user_id).to be(nil)
       expect(@controller.user_password).to be(nil)
 
       @controller.register_user
 
-      expect(@controller.user_id).to eq "157610723"
-      expect(@controller.user_password).to eq "626078090"
+      expect(@controller.user_id).to eq "123"
+      expect(@controller.user_password).to eq "456"
     end
   end
 end

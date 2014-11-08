@@ -19,7 +19,6 @@ module MySelf
       end
     end
 
-
     def admin_list_buckets
       http = Net::HTTP.new(server, 4735)
 

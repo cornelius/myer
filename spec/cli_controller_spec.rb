@@ -15,9 +15,8 @@ describe CliController do
 
   describe "#create_bucket" do
     it "creates new bucket" do
-      stub_request(:post, "http://ddd:ggg@example.org:4735/data").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '{"bucket_id":"150479372"}', :headers => {})
+      expect_any_instance_of(MySelf::Api).to receive(:create_bucket)
+        .and_return("150479372")
 
       config_file_path = nil
       @controller.config_dir = given_directory do
@@ -39,9 +38,9 @@ describe CliController do
 
   describe "#write_item" do
     it "writes raw item" do
-      stub_request(:post, "http://ddd:ggg@example.org:4735/data/309029630").
-         with(:body => 'my data', :headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '{"item_id":"504885608","parent_id":"772806166"}', :headers => {})
+      expect_any_instance_of(MySelf::Api).to receive(:create_item)
+        .with("309029630", "my data")
+        .and_return("504885608")
 
       @controller.config_dir = given_directory do
         given_file("myer.config", from: "myer-full.config")
@@ -74,9 +73,13 @@ describe CliController do
   describe "#read_items" do
     it "reads raw items" do
       bucket_id = "987654321"
-      stub_request(:get, "http://ddd:ggg@example.org:4735/data/#{bucket_id}").
-         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
-         to_return(:status => 200, :body => '[{"item_id":"263800370","parent_id":"271086077","content":"more data"},{"item_id":"271086077","parent_id":"","content":"my data"}]', :headers => {})
+      items = [
+        OpenStruct.new(id: "271086077", content: "my data"),
+        OpenStruct.new(id: "263800370", content: "more data")
+      ]
+
+      expect_any_instance_of(MySelf::Api).to receive(:get_items).with(bucket_id)
+        .and_return(items)
 
       @controller.config_dir = given_directory do
         given_file("myer.config", from: "myer-full.config")
