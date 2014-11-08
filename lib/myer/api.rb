@@ -11,7 +11,7 @@ module MySelf
       response = http.request(request)
 
       if response.code != "200"
-        raise "#{path} HTTP Error #{response.code} - #{response.body}"
+        raise "#{request.path} HTTP Error #{response.code} - #{response.body}"
       else
         return JSON.parse(response.body)
       end

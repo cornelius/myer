@@ -189,4 +189,28 @@ describe CliController do
       expect(token).to eq expected_token
     end
   end
+
+  describe "#register" do
+    it "registers user client" do
+      @controller.config_dir = given_directory
+
+      token = "12342"
+      server = "example.org"
+      expected_user = "xxx"
+      expected_password = "yyy"
+      expect_any_instance_of(MySelf::Api).to receive(:register)
+        .with(token)
+        .and_return([expected_user, expected_password])
+
+      @controller.register(server, token)
+
+      expect(@controller.server).to eq server
+      expect(@controller.user_id).to eq expected_user
+      expect(@controller.user_password).to eq expected_password
+
+      config = YAML.load_file(File.join(@controller.config_dir, "myer.config"))
+      expect(config["example.org"]["user_id"]).to eq expected_user
+      expect(config["example.org"]["user_password"]).to eq expected_password
+    end
+  end
 end

@@ -33,7 +33,10 @@ module Myer
     end
 
     def read_state
-      state = YAML.load_file(File.join(@config_dir, "myer.config"))
+      config_file = File.join(@config_dir, "myer.config")
+      return if !File.exist?(config_file)
+
+      state = YAML.load_file(config_file)
 
       self.server = state["default_server"]
       server_state = state[server]

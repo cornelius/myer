@@ -97,6 +97,15 @@ command :create_token do |c|
   end
 end
 
+desc "Register user client"
+arg :server
+arg :token
+command :register do |c|
+  c.action do |global_options, options, args|
+    CliController.new.register(args[0], args[1])
+  end
+end
+
 desc "Write item"
 command :write do |c|
   c.switch :raw, desc: "Write unencrypted"

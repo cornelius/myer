@@ -54,6 +54,15 @@ class CliController
     token
   end
 
+  def register(server, token)
+    read_state
+
+    self.server = server
+    self.user_id, self.user_password = api.register(token)
+
+    write_state
+  end
+
   def write_item(bucket_id, content)
     read_state
 
