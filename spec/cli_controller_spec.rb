@@ -12,7 +12,7 @@ describe CliController do
   end
 
   it_behaves_like "config"
-  
+
   describe "#create_bucket" do
     it "creates new bucket" do
       stub_request(:post, "http://ddd:ggg@example.org:4735/data").
@@ -107,6 +107,11 @@ describe CliController do
 
   describe "#write_value" do
     it "writes value" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+        given_file("secret-ticket-987654321.json")
+      end
+
       value = 42
 
       expect(@controller).to receive(:write_item)
@@ -116,6 +121,11 @@ describe CliController do
 
   describe "#write_pair" do
     it "writes value pair" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+        given_file("secret-ticket-987654321.json")
+      end
+
       expect(@controller).to receive(:write_value).with('["2014-10-24","42"]')
 
       @controller.write_pair("2014-10-24", "42")
