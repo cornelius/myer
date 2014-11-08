@@ -32,6 +32,6 @@ describe Crypto do
 
     expect {
       @crypto.decrypt(encrypted)
-    }.to raise_error
+    }.to raise_error DecryptionFailed
   end
 end
