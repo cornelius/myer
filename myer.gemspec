@@ -23,6 +23,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rspec')
   s.add_development_dependency('webmock')
   s.add_development_dependency('given_filesystem')
+  s.add_development_dependency('codeclimate-test-reporter')
   s.add_runtime_dependency('gli','2.12.2')
   s.add_runtime_dependency('xdg')
 end

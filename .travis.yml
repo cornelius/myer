@@ -3,3 +3,7 @@ rvm:
   - "2.0.0"
   - "2.1.1"
 script: bundle exec rspec spec
+addons:
+  code_climate:
+    repo_token:
+      secure: XQRgzJQhdraJYMTUusZwi2D7CeArx1a/PF8tkpT3BiGO3xKLRdImfjSWP4HOAMzKE7iOOtwcySgHMJIEguWurn95mvIwbMQtA41vjDbEXCnHOS2F0n15Gb7sy2ULf6Qx+41YO5TlqubAUQRvPgb6wNFZ0OBemvLENTWMzrhITJo=
