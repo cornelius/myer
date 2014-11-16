@@ -113,6 +113,9 @@ class CliController
 
   def read
     read_state
+    if !default_bucket_id || default_bucket_id.empty?
+      raise Myer::Error.new("Default bucket id not set")
+    end
     read_items(default_bucket_id)
   end
 

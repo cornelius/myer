@@ -116,6 +116,16 @@ describe CliController do
     end
   end
 
+  describe "#read" do
+    it "gives an error when bucket is not set" do
+      @controller.config_dir = given_directory
+
+      expect {
+        @controller.read
+      }.to raise_error(Myer::Error)
+    end
+  end
+
   describe "#write_value" do
     it "writes value" do
       @controller.config_dir = given_directory do

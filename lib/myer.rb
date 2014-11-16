@@ -11,6 +11,7 @@ end
 
 require_myer "version"
 
+require_myer "exceptions"
 require_myer "config"
 require_myer "xinput_parser"
 require_myer "cli_controller"
