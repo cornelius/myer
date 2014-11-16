@@ -22,6 +22,12 @@ describe TicketStore do
     expect(ticket.key).to eq "secret key"
   end
 
+  it "raises exception on load of invalid ticket" do
+    expect {
+      TicketStore.new.load_ticket(given_dummy_file)
+    }.to raise_error
+  end
+
   it "saves" do
     ticket_dir = given_directory
 

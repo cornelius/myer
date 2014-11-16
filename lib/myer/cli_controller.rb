@@ -39,6 +39,10 @@ class CliController
 
     write_state
 
+    out.puts("Created new bucket and stored its secret ticket at #{store.ticket_path(ticket)}.")
+    out.puts("You need this ticket to give other clients access to the bucket.")
+    out.puts("Keep it safe and secret. Everybody who has the ticket can read the bucket data.")
+
     bucket_id
   end
 

@@ -7,19 +7,25 @@ class TicketStore
     "secret-ticket-#{bucket_id}.json"
   end
 
+  def ticket_path(ticket)
+    File.join(@ticket_dir, ticket_file_name(ticket.bucket_id))
+  end
+
   def load_ticket(bucket_id)
-    file_path = File.join(@ticket_dir, ticket_file_name(bucket_id))
-    json = JSON.parse(File.read(file_path))
     ticket = Ticket.new
-    ticket.bucket_id = json["bucket_id"]
+    ticket.bucket_id = bucket_id
+    json = JSON.parse(File.read(ticket_path(ticket)))
+    if json["bucket_id"] != bucket_id
+      binding.pry
+      raise "Invalid ticket #{ticket_path(ticket)}. File name doesn't match bucket id"
+    end
     ticket.key = json["key"]
     ticket
   end
 
   def save_ticket(ticket)
-    file_path = File.join(@ticket_dir, ticket_file_name(ticket.bucket_id))
     json = { "bucket_id" => ticket.bucket_id, "key" => ticket.key }
-    File.open(file_path, "w", 0600) do |f|
+    File.open(ticket_path(ticket), "w", 0600) do |f|
       f.write(JSON.generate(json))
       f.puts
     end

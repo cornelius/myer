@@ -15,23 +15,31 @@ describe CliController do
 
   describe "#create_bucket" do
     it "creates new bucket" do
+      expected_bucket_id = "150479372"
       expect_any_instance_of(MySelf::Api).to receive(:create_bucket)
-        .and_return("150479372")
+        .and_return(expected_bucket_id)
 
       config_file_path = nil
       @controller.config_dir = given_directory do
         config_file_path = given_file("myer.config", from: "myer-full.config")
       end
 
+      ticket_name = "secret-ticket-#{expected_bucket_id}.json"
+      ticket_file_path = File.join(@controller.config_dir, ticket_name)
+
+      out = double
+      expect(out).to receive(:puts).with(/#{ticket_name}/).at_least(:once)
+      expect(out).to receive(:puts).at_least(:once)
+      @controller.out = out
+
       bucket_id = @controller.create_bucket
-      expect(bucket_id).to eq "150479372"
+      expect(bucket_id).to eq expected_bucket_id
 
       expect(@controller.default_bucket_id).to eq bucket_id
 
       config = YAML.load_file(config_file_path)
       expect(config["example.org"]["default_bucket_id"]).to eq bucket_id
 
-      ticket_file_path = File.join(@controller.config_dir, "secret-ticket-150479372.json")
       expect(File.exist?(ticket_file_path)).to be true
     end
   end
