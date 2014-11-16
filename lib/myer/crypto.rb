@@ -1,6 +1,3 @@
-class CmdFailed < StandardError; end
-class DecryptionFailed < StandardError; end
-
 class Crypto
 
   attr_accessor :passphrase
@@ -17,7 +14,7 @@ class Crypto
       output = stdout.read
 
       if !wait_thr.value.success?
-        raise CmdFailed.new(stderr.read)
+        raise Myer::CmdFailed.new(stderr.read)
       end
     end
     output
@@ -27,7 +24,7 @@ class Crypto
     cmd = "gpg --batch --armor --passphrase '#{passphrase}' --symmetric"
     begin
       return call_cmd(cmd, plaintext)
-    rescue CmdFailed => e
+    rescue Myer::CmdFailed => e
       raise "Encryption failed: #{e}"
     end
   end
@@ -36,8 +33,8 @@ class Crypto
     cmd = "gpg --batch --passphrase '#{passphrase}' --decrypt"
     begin
       return call_cmd(cmd, ciphertext).chomp
-    rescue CmdFailed => e
-      raise DecryptionFailed.new("Decryption failed: #{e}")
+    rescue Myer::CmdFailed => e
+      raise Myer::DecryptionFailed.new("Decryption failed: #{e}")
     end
   end
 end
