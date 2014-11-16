@@ -3,7 +3,7 @@ require_relative "spec_helper"
 include GivenFilesystemSpecHelpers
 
 describe TicketStore do
-  use_given_filesystem(:keep_files => true)
+  use_given_filesystem
 
   before(:each) do
   end
