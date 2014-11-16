@@ -221,4 +221,23 @@ describe CliController do
       expect(config["example.org"]["user_password"]).to eq expected_password
     end
   end
+
+  describe "#consume_ticket" do
+    it "moves ticket to correct place" do
+      ticket_name = "secret-ticket-12345678.json"
+      ticket_source_path = given_file(ticket_name)
+      @controller.config_dir = given_directory
+      ticket_target_path = File.join(@controller.config_dir, ticket_name)
+      ticket_content = File.read(ticket_source_path)
+
+      expect(File.exist?(ticket_target_path)).to be(false)
+
+      @controller.consume_ticket(ticket_source_path)
+
+      expect(File.exist?(ticket_source_path)).to be(false)
+      expect(File.read(ticket_target_path)).to eq ticket_content
+
+      expect(@controller.default_bucket_id).to eq(YAML.load(ticket_content)["bucket_id"])
+    end
+  end
 end

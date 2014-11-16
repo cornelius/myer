@@ -150,4 +150,12 @@ command :plot do |c|
   end
 end
 
+desc "Consume ticket"
+arg :ticket_path
+command :consume_ticket do |c|
+  c.action do |global_options, options, args|
+    CliController.new.consume_ticket(args[0])
+  end
+end
+
 exit run(ARGV)

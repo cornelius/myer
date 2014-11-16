@@ -150,4 +150,16 @@ class CliController
     plot = Plot.new
     plot.show(csv_file.path)
   end
+
+  def consume_ticket(ticket_source_path)
+    read_state
+
+    ticket_target_path = File.join(config_dir, File.basename(ticket_source_path))
+    FileUtils.mv(ticket_source_path, ticket_target_path)
+    store = TicketStore.new(config_dir)
+    ticket = store.load_ticket_from_file(ticket_target_path)
+    self.default_bucket_id = ticket.bucket_id
+
+    write_state
+  end
 end

@@ -8,7 +8,7 @@ describe TicketStore do
   before(:each) do
   end
 
-  it "loads" do
+  it "loads ticket for bucket id" do
     bucket_id = "12345678"
 
     ticket_dir = given_directory do
@@ -20,6 +20,20 @@ describe TicketStore do
 
     expect(ticket.bucket_id).to eq bucket_id
     expect(ticket.key).to eq "secret key"
+  end
+
+  it "loads ticket from file" do
+    bucket_id = "12345678"
+
+    ticket_path = nil
+    ticket_dir = given_directory do
+      ticket_path = given_file("secret-ticket-#{bucket_id}.json")
+    end
+
+    store = TicketStore.new(ticket_dir)
+    ticket = store.load_ticket_from_file(ticket_path)
+
+    expect(ticket.bucket_id).to eq(bucket_id)
   end
 
   it "raises exception on load of invalid ticket" do
