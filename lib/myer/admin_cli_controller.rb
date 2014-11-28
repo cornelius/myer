@@ -28,8 +28,19 @@ class AdminCliController
 
     buckets = api.admin_list_buckets
 
+    store = TicketStore.new(config_dir)
     buckets.each do |bucket_id|
-      out.puts bucket_id + (bucket_id == default_bucket_id ? " (default)" : "")
+      line = bucket_id + ": "
+      ticket = store.load_ticket(bucket_id)
+      if ticket
+        line += ticket.name || "<no name>"
+      else
+        line += "<no ticket>"
+      end
+      if bucket_id == default_bucket_id
+        line += " (default)"
+      end
+      out.puts line
     end
   end
 

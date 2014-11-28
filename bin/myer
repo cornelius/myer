@@ -84,9 +84,10 @@ command :track_clicks do |c|
 end
 
 desc "Create bucket"
+arg :name
 command :create_bucket do |c|
-  c.action do
-    CliController.new.create_bucket
+  c.action do |global_options, options, args|
+    CliController.new.create_bucket(args[0])
   end
 end
 

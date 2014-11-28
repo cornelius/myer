@@ -14,12 +14,17 @@ class TicketStore
   def load_ticket(bucket_id)
     ticket = Ticket.new
     ticket.bucket_id = bucket_id
-    json = JSON.parse(File.read(ticket_path(ticket)))
+    begin
+      ticket_content = File.read(ticket_path(ticket))
+    rescue Errno::ENOENT
+      return nil
+    end
+    json = JSON.parse(ticket_content)
     if json["bucket_id"] != bucket_id
-      binding.pry
       raise "Invalid ticket #{ticket_path(ticket)}. File name doesn't match bucket id"
     end
     ticket.key = json["key"]
+    ticket.name = json["name"]
     ticket
   end
 
@@ -28,11 +33,13 @@ class TicketStore
     ticket = Ticket.new
     ticket.bucket_id = json["bucket_id"]
     ticket.key = json["key"]
+    ticket.name = json["name"]
     ticket
   end
 
   def save_ticket(ticket)
-    json = { "bucket_id" => ticket.bucket_id, "key" => ticket.key }
+    json = { "name" => ticket.name, "bucket_id" => ticket.bucket_id,
+             "key" => ticket.key }
     File.open(ticket_path(ticket), "w", 0600) do |f|
       f.write(JSON.generate(json))
       f.puts

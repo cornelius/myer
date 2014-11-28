@@ -39,18 +39,23 @@ EOT
   describe "#list_buckets" do
     it "lists existing buckets" do
       expect_any_instance_of(MySelf::Api).to receive(:admin_list_buckets)
-        .and_return(["150479372","309029630"])
+        .and_return(["12345678","309029630"])
 
       @controller.config_dir = given_directory do
         given_file("myer.config")
+        given_file("secret-ticket-12345678.json")
       end
 
-      out = double
-      expect(out).to receive(:puts).with("150479372")
-      expect(out).to receive(:puts).with("309029630")
+      out = StringIO.new
       @controller.out = out
 
       @controller.list_buckets
+
+      expect(out.string).to eq(<<EOT
+12345678: Test Data
+309029630: <no ticket>
+EOT
+      )
     end
   end
 

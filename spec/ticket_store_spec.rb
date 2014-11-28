@@ -20,6 +20,7 @@ describe TicketStore do
 
     expect(ticket.bucket_id).to eq bucket_id
     expect(ticket.key).to eq "secret key"
+    expect(ticket.name).to eq "Test Data"
   end
 
   it "loads ticket from file" do
@@ -47,18 +48,20 @@ describe TicketStore do
 
     bucket_id = "456789012"
     bucket_key = "geheim"
+    bucket_name = "Test Data"
 
     store = TicketStore.new(ticket_dir)
     ticket = Ticket.new
     ticket.bucket_id = bucket_id
     ticket.key = bucket_key
+    ticket.name = bucket_name
 
     store.save_ticket(ticket)
 
     ticket_path = File.join(ticket_dir, "secret-ticket-#{bucket_id}.json")
 
     expect(File.read(ticket_path)).to eq(<<EOT
-{"bucket_id":"456789012","key":"geheim"}
+{"name":"Test Data","bucket_id":"456789012","key":"geheim"}
 EOT
     )
     expect(File.stat(ticket_path).mode).to eq 0100600

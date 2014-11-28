@@ -23,7 +23,7 @@ class CliController
     end
   end
 
-  def create_bucket
+  def create_bucket(name)
     read_state
 
     bucket_id = api.create_bucket
@@ -33,6 +33,7 @@ class CliController
     ticket = Ticket.new
     ticket.bucket_id = bucket_id
     ticket.key = @crypto.generate_passphrase
+    ticket.name = name
 
     store = TicketStore.new(config_dir)
     store.save_ticket(ticket)

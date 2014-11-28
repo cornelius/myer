@@ -32,7 +32,7 @@ describe CliController do
       expect(out).to receive(:puts).at_least(:once)
       @controller.out = out
 
-      bucket_id = @controller.create_bucket
+      bucket_id = @controller.create_bucket("Test Data")
       expect(bucket_id).to eq expected_bucket_id
 
       expect(@controller.default_bucket_id).to eq bucket_id
@@ -40,7 +40,9 @@ describe CliController do
       config = YAML.load_file(config_file_path)
       expect(config["example.org"]["default_bucket_id"]).to eq bucket_id
 
-      expect(File.exist?(ticket_file_path)).to be true
+      json = JSON.parse(File.read(ticket_file_path))
+      expect(json["name"]).to eq "Test Data"
+      expect(json["bucket_id"]).to eq expected_bucket_id
     end
   end
 
