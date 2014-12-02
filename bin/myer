@@ -151,6 +151,14 @@ command :plot do |c|
   end
 end
 
+desc "Export data"
+arg :output_path
+command :export do |c|
+  c.action do|global_options, options, args|
+    CliController.new.export(args[0])
+  end
+end
+
 desc "Consume ticket"
 arg :ticket_path
 command :consume_ticket do |c|

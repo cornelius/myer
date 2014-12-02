@@ -35,4 +35,24 @@ class Content
       end
     end
   end
+
+  def write_as_json(output_path)
+    json = {}
+    json["title"] = title
+
+    data_array = []
+    @items.each do |item|
+      data_item = {}
+      data_item["date"] = item.data[0]
+      data_item["value"] = item.data[1]
+
+      data_array.push(data_item)
+    end
+
+    json["data"] = data_array
+
+    File.open(output_path, "w") do |file|
+      file.write(json.to_json)
+    end
+  end
 end

@@ -155,6 +155,18 @@ class CliController
     plot.show(csv_file.path)
   end
 
+  def export(output_path)
+    read_state
+
+    content = Content.new
+    inner_items = read
+    inner_items.each do |inner_item|
+      content.add(inner_item)
+    end
+
+    content.write_as_json(output_path)
+  end
+
   def consume_ticket(ticket_source_path)
     read_state
 

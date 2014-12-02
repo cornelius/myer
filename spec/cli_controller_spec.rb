@@ -190,6 +190,27 @@ describe CliController do
     end
   end
 
+  describe "#export" do
+    it "exports read data as JSON" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+        given_file("secret-ticket-987654321.json")
+      end
+
+      output_path = File.join(given_directory, "export.json")
+
+      expect(@controller).to receive(:read_items).and_return(['{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}','{"data":"My Data","tag":"title"}'])
+
+      @controller.export(output_path)
+
+      expected_data = <<EOT
+{"title":"My Data","data":[{"date":"2014-06-03","value":"37"},{"date":"2014-06-04","value":"39"}]}
+EOT
+
+      expect(File.read(output_path)).to eq(expected_data.chomp)
+    end
+  end
+
   describe "#create_token" do
     it "creates token" do
       @controller.config_dir = given_directory do
