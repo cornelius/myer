@@ -42,6 +42,18 @@ on_error do |exception|
   true
 end
 
+desc "Test"
+command :test do |c|
+  c.desc "Full server acceptance test"
+  c.arg :server
+  c.arg :pin
+  c.command :full do |full|
+    full.action do |global_options, options, args|
+      TestCliController.new.full(args[0], args[1])
+    end
+  end
+end
+
 desc "Admin actions"
 command :admin do |c|
   c.desc "Register admin client"
