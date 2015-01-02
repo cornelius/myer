@@ -17,12 +17,6 @@ class CliController
     api
   end
 
-  def track_clicks(mouse_id)
-    XinputParser.new.track_clicks(mouse_id) do
-      puts "CLICK"
-    end
-  end
-
   def create_bucket(name)
     read_state
 
