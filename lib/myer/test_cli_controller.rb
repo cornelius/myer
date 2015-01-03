@@ -46,7 +46,7 @@ class TestCliController
     if items.size == 1 && items[0].id == item && items[0].content == content
       @out.puts "Full acceptance test passed"
     else
-      @out.puts "Fill acceptance test failed"
+      @out.puts "Full acceptance test failed"
     end
   end
 end
