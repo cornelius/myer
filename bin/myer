@@ -52,6 +52,14 @@ command :test do |c|
       TestCliController.new.full(args[0], args[1])
     end
   end
+
+  c.desc "Full local server acceptance test"
+  c.arg :executable
+  c.command :local do |local|
+    local.action do |global_options, options, args|
+      TestCliController.new.local(args[0])
+    end
+  end
 end
 
 desc "Admin actions"

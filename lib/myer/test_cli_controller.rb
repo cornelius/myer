@@ -5,6 +5,23 @@ class TestCliController
     @out = STDOUT
   end
 
+  def local(executable)
+    Dir.mktmpdir do |dir|
+      pin = "xyz"
+
+      cmd = "#{executable} -pin=#{pin} -logfile=/dev/null #{dir}/data"
+      io = IO.popen(cmd)
+
+      sleep(1)
+
+      begin
+        full("localhost", pin)
+      ensure
+        Process.kill("INT", io.pid)
+      end
+    end
+  end
+
   def full(server, pid)
     admin_api = MySelf::Api.new
     admin_api.server = server
