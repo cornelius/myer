@@ -13,7 +13,11 @@ module MySelf
       if response.code != "200"
         raise "#{request.path} HTTP Error #{response.code} - #{response.body}"
       else
-        return JSON.parse(response.body)
+        if response.body and !response.body.empty?
+          return JSON.parse(response.body)
+        else
+          return nil
+        end
       end
     end
 
@@ -34,6 +38,14 @@ module MySelf
       end
     end
 
+    def delete(path)
+      http_request do
+        request = Net::HTTP::Delete.new(path)
+        request.basic_auth(user, password)
+        request
+      end
+    end
+
     def admin_register(pid)
       json = post("/admin/register/#{pid}",nil,false)
       return json["admin_id"], json["password"]
@@ -41,6 +53,10 @@ module MySelf
 
     def admin_list_buckets
       get("/admin/buckets")
+    end
+
+    def admin_delete_bucket(bucket_id)
+      delete("/admin/buckets/#{bucket_id}")
     end
 
     def create_token

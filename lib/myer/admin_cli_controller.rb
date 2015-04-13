@@ -44,6 +44,12 @@ class AdminCliController
     end
   end
 
+  def delete_bucket(bucket_id)
+    read_state
+
+    api.admin_delete_bucket(bucket_id)
+  end
+
   def status
     read_state
 

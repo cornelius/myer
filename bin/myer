@@ -87,6 +87,14 @@ command :admin do |c|
     end
   end
 
+  c.desc "Delete bucket"
+  c.arg :bucket_id
+  c.command :delete_bucket do |sc|
+    sc.action do |global_options, options, args|
+      AdminCliController.new.delete_bucket(args[0])
+    end
+  end
+
   c.desc "Print status"
   c.command :status do |sc|
     sc.action do
