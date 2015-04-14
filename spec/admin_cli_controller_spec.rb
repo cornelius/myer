@@ -75,6 +75,10 @@ EOT
 
   describe "#delete_bucket" do
     it "deletes bucket" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
       bucket_id = "123"
 
       expect_any_instance_of(MySelf::Api).to receive(:admin_delete_bucket)
