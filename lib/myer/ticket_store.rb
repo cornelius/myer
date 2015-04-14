@@ -41,7 +41,7 @@ class TicketStore
 
   def tickets_per_server
     tickets = {}
-    Dir.glob("#{@ticket_dir}/secret-ticket-*.json").each do |path|
+    Dir.glob("#{@ticket_dir}/secret-ticket-*.json").sort.each do |path|
       ticket = load_ticket_from_file(path)
       tickets[ticket.server] ||= []
       tickets[ticket.server].push(ticket)
