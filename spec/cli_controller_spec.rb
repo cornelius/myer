@@ -18,7 +18,7 @@ describe CliController do
       @controller.config_dir = given_directory do
         given_file("myer.config", from: "myer-full.config")
       end
-      @controller.read_state
+      @controller.read_config
       api = @controller.api
 
       expect(api.user).to eq "ddd"
@@ -83,7 +83,7 @@ describe CliController do
         given_file("secret-ticket-987654321.json")
       end
 
-      @controller.read_state
+      @controller.read_config
       bucket_id = @controller.default_bucket_id
 
       allow_any_instance_of(Crypto).to receive(:encrypt).and_return("encrypted")

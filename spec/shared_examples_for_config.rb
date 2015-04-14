@@ -1,6 +1,6 @@
 shared_examples "config" do
   describe "remembers state" do
-    it "writes state to config file" do
+    it "writes config file" do
       config_dir = File.join(given_directory, "subdir")
       @controller.config_dir = config_dir
 
@@ -11,7 +11,7 @@ shared_examples "config" do
       @controller.user_password = "xyz"
       @controller.default_bucket_id = "890"
 
-      @controller.write_state
+      @controller.write_config
 
       expect(File.read(File.join(config_dir,"myer.config"))).to eq(<<EOT
 ---
@@ -27,13 +27,13 @@ EOT
       )
     end
 
-    it "reads state from config file" do
+    it "reads config file" do
       config_dir = given_directory do
         given_file "myer.config", from: "myer-full.config"
       end
       @controller.config_dir = config_dir
 
-      @controller.read_state
+      @controller.read_config
 
       expect(@controller.default_server).to eq "example.org"
       server = @controller.server(@controller.default_server)

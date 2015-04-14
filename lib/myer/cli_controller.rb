@@ -20,7 +20,7 @@ class CliController
   end
 
   def create_bucket(name)
-    read_state
+    read_config
 
     bucket_id = api.create_bucket
 
@@ -35,7 +35,7 @@ class CliController
     store = TicketStore.new(config_dir)
     store.save_ticket(ticket)
 
-    write_state
+    write_config
 
     out.puts("Created new bucket and stored its secret ticket at #{store.ticket_path(ticket)}.")
     out.puts("You need this ticket to give other clients access to the bucket.")
@@ -45,7 +45,7 @@ class CliController
   end
 
   def create_token
-    read_state
+    read_config
 
     token = api.create_token
 
@@ -57,27 +57,27 @@ class CliController
   end
 
   def register(server_name, token)
-    read_state
+    read_config
 
     self.default_server = server_name
     self.user_id, self.user_password = api(server_name).register(token)
 
-    write_state
+    write_config
   end
 
   def write_item(bucket_id, content)
-    read_state
+    read_config
 
     return api.create_item(bucket_id, content)
   end
 
   def write_raw(content)
-    read_state
+    read_config
     write_item(default_bucket_id, content)
   end
 
   def write(content)
-    read_state
+    read_config
 
     store = TicketStore.new(config_dir)
     ticket = store.load_ticket(default_bucket_id)
@@ -90,7 +90,7 @@ class CliController
   end
 
   def read_items(bucket_id)
-    read_state
+    read_config
 
     store = TicketStore.new(config_dir)
     ticket = store.load_ticket(default_bucket_id)
@@ -110,7 +110,7 @@ class CliController
   end
 
   def read
-    read_state
+    read_config
     if !default_bucket_id || default_bucket_id.empty?
       raise Myer::Error.new("Default bucket id not set")
     end
@@ -136,7 +136,7 @@ class CliController
   end
 
   def plot
-    read_state
+    read_config
 
     csv_file = Tempfile.new("myer_plot_data")
     content = Content.new
@@ -153,7 +153,7 @@ class CliController
   end
 
   def export(output_path)
-    read_state
+    read_config
 
     content = Content.new
     inner_items = read
@@ -165,7 +165,7 @@ class CliController
   end
 
   def consume_ticket(ticket_source_path)
-    read_state
+    read_config
 
     ticket_target_path = File.join(config_dir, File.basename(ticket_source_path))
     FileUtils.mv(ticket_source_path, ticket_target_path)
@@ -173,11 +173,11 @@ class CliController
     ticket = store.load_ticket_from_file(ticket_target_path)
     self.default_bucket_id = ticket.bucket_id
 
-    write_state
+    write_config
   end
 
   def list_tickets(show_status: false)
-    read_state
+    read_config
 
     store = TicketStore.new(config_dir)
     out.puts "Available Tickets:"

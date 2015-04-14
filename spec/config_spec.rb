@@ -9,7 +9,7 @@ end
 describe Myer::Config do
   use_given_filesystem
 
-  describe "#write_state" do
+  describe "#write_config" do
     before(:each) do
       @config = MyConfig.new
       @config.config_dir = given_directory
@@ -25,7 +25,7 @@ describe Myer::Config do
         @config.user_password = "ggg"
         @config.default_bucket_id = "987654321"
 
-        @config.write_state
+        @config.write_config
 
         expect(File.read(File.join(@config.config_dir, "myer.config"))).
           to eq(File.read(test_data_path("myer-full.config")))
@@ -33,7 +33,7 @@ describe Myer::Config do
     end
   end
 
-  describe "#read_state" do
+  describe "#read_config" do
     describe "with one server" do
       before(:each) do
         @config = MyConfig.new
@@ -41,7 +41,7 @@ describe Myer::Config do
           given_file("myer.config", from: "myer-full.config")
         end
 
-        @config.read_state
+        @config.read_config
       end
 
       it "reads config" do
@@ -65,7 +65,7 @@ describe Myer::Config do
           given_file("myer.config", from: "myer-multiple.config")
         end
 
-        @config.read_state
+        @config.read_config
       end
 
       it "reads list of servers" do

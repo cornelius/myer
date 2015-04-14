@@ -22,11 +22,11 @@ class AdminCliController
     self.default_server = server_name
     self.admin_id, self.admin_password = api(server_name).admin_register(pid)
 
-    write_state
+    write_config
   end
 
   def list_buckets
-    read_state
+    read_config
 
     buckets = api.admin_list_buckets
 
@@ -47,24 +47,24 @@ class AdminCliController
   end
 
   def delete_bucket(bucket_id)
-    read_state
+    read_config
 
     api.admin_delete_bucket(bucket_id)
   end
 
   def status
-    read_state
+    read_config
 
     out.puts "Default server: #{default_server}"
     out.puts "Default bucket: #{default_bucket_id}"
   end
 
   def register_user
-    read_state
+    read_config
 
     token = api.create_token
     self.user_id, self.user_password = api.register(token)
 
-    write_state
+    write_config
   end
 end

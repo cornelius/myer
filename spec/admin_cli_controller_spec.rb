@@ -18,7 +18,7 @@ describe AdminCliController do
       @controller.config_dir = given_directory do
         given_file("myer.config", from: "myer-full.config")
       end
-      @controller.read_state
+      @controller.read_config
       api = @controller.api
 
       expect(api.user).to eq "abc"

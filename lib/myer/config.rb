@@ -55,17 +55,16 @@ module Myer
     define_attribute :user_password
     define_attribute :default_bucket_id
 
-    def write_state
+    def write_config
       FileUtils.mkdir_p(@config_dir)
       File.write(File.join(@config_dir, "myer.config"), @config.to_yaml)
     end
 
-    def read_state
+    def read_config
       config_file = File.join(@config_dir, "myer.config")
       return if !File.exist?(config_file)
 
-      state = YAML.load_file(config_file)
-      @config = state
+      @config = YAML.load_file(config_file)
 
       @default_server = @config["default_server"]
     end
