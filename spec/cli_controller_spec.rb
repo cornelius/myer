@@ -294,5 +294,31 @@ Available Tickets:
     Bucket 'Test Data' (987654321)
 EOT
     end
+
+    it "lists tickets with status" do
+      stub_request(:get, "http://mycroft.example.org:4735/ping").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "{\"ping\":\"pong\"}", :headers => {})
+      stub_request(:get, "http://localhost:4735/ping").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "broken", :headers => {})
+
+      @controller.config_dir = given_directory do
+        given_file("secret-ticket-12345678.json")
+        given_file("secret-ticket-987654321.json")
+      end
+
+      @controller.out = StringIO.new
+
+      @controller.list_tickets(show_status: true)
+
+      expect(@controller.out.string).to eq <<EOT
+Available Tickets:
+  Server 'mycroft.example.org' [pings]:
+    Bucket 'Test Data' (12345678)
+  Server 'localhost' [ping error: 757: unexpected token at 'broken']:
+    Bucket 'Test Data' (987654321)
+EOT
+    end
   end
 end

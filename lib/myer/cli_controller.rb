@@ -174,11 +174,21 @@ class CliController
     write_state
   end
 
-  def list_tickets
+  def list_tickets(show_status: false)
     store = TicketStore.new(config_dir)
     out.puts "Available Tickets:"
     store.tickets_per_server.each do |server,tickets|
-      out.puts "  Server '#{server}':"
+      if show_status
+        server_api = api
+        server_api.server = server
+        begin
+          server_api.ping
+          status = " [pings]"
+        rescue StandardError => e
+          status = " [ping error: #{e.message.chomp}]"
+        end
+      end
+      out.puts "  Server '#{server}'#{status}:"
       tickets.each do |ticket|
         out.puts "    Bucket '#{ticket.name}' (#{ticket.bucket_id})"
       end

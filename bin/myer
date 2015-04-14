@@ -189,8 +189,9 @@ end
 
 desc "List tickets"
 command :list_tickets do |c|
-  c.action do
-    CliController.new.list_tickets
+  c.switch :status, desc: "Show server status"
+  c.action do |_, options, _|
+    CliController.new.list_tickets(show_status: options[:status])
   end
 end
 exit run(ARGV)

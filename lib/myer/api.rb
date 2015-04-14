@@ -93,5 +93,12 @@ module MySelf
 
       return inner_items
     end
+
+    def ping
+      json = get("/ping")
+      if json["ping"] != "pong"
+        raise "ping error: expected 'pong', got '#{result}'"
+      end
+    end
   end
 end

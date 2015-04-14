@@ -124,4 +124,13 @@ describe MySelf::Api do
       expect(@api.get_items(bucket_id)).to eq expected_items
     end
   end
+
+  describe "#ping" do
+    it "pongs" do
+      stub_request(:get, "http://abc:def@example.org:4735/ping").
+         with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Ruby'}).
+         to_return(:status => 200, :body => "{\"ping\":\"pong\"}", :headers => {})
+      @api.ping
+    end
+  end
 end
