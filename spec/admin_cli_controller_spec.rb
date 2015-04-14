@@ -13,6 +13,19 @@ describe AdminCliController do
 
   it_behaves_like "config"
 
+  describe "#api" do
+    it "provides admin API" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config", from: "myer-full.config")
+      end
+      @controller.read_state
+      api = @controller.api
+
+      expect(api.user).to eq "abc"
+      expect(api.password).to eq "def"
+    end
+  end
+
   describe "#register" do
     it "registers admin client" do
       @controller.config_dir = given_directory
@@ -23,14 +36,15 @@ describe AdminCliController do
       @controller.register "example.com", "1234"
 
       expect(@controller.admin_id).to eq "181504088"
-      expect(@controller.password).to eq "683271947"
+      expect(@controller.admin_password).to eq "683271947"
 
       expect(File.read(File.join(@controller.config_dir, "myer.config"))).to eq (<<EOT
 ---
 default_server: example.com
-example.com:
-  admin_id: '181504088'
-  password: '683271947'
+servers:
+  example.com:
+    admin_id: '181504088'
+    admin_password: '683271947'
 EOT
       )
     end

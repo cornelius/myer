@@ -13,6 +13,19 @@ describe CliController do
 
   it_behaves_like "config"
 
+  describe "#api" do
+    it "provides user API" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config", from: "myer-full.config")
+      end
+      @controller.read_state
+      api = @controller.api
+
+      expect(api.user).to eq "ddd"
+      expect(api.password).to eq "ggg"
+    end
+  end
+
   describe "#create_bucket" do
     it "creates new bucket" do
       expected_bucket_id = "150479372"
@@ -38,7 +51,7 @@ describe CliController do
       expect(@controller.default_bucket_id).to eq bucket_id
 
       config = YAML.load_file(config_file_path)
-      expect(config["example.org"]["default_bucket_id"]).to eq bucket_id
+      expect(config["servers"]["example.org"]["default_bucket_id"]).to eq bucket_id
 
       json = JSON.parse(File.read(ticket_file_path))
       expect(json["server"]).to eq "example.org"
@@ -246,13 +259,13 @@ EOT
 
       @controller.register(server, token)
 
-      expect(@controller.server).to eq server
+      expect(@controller.default_server).to eq server
       expect(@controller.user_id).to eq expected_user
       expect(@controller.user_password).to eq expected_password
 
       config = YAML.load_file(File.join(@controller.config_dir, "myer.config"))
-      expect(config["example.org"]["user_id"]).to eq expected_user
-      expect(config["example.org"]["user_password"]).to eq expected_password
+      expect(config["servers"]["example.org"]["user_id"]).to eq expected_user
+      expect(config["servers"]["example.org"]["user_password"]).to eq expected_password
     end
   end
 
@@ -306,6 +319,7 @@ EOT
       @controller.config_dir = given_directory do
         given_file("secret-ticket-12345678.json")
         given_file("secret-ticket-987654321.json")
+        given_file("myer.config", from: "myer-full.config")
       end
 
       @controller.out = StringIO.new

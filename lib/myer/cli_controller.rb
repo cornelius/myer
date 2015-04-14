@@ -9,11 +9,13 @@ class CliController
     @crypto = Crypto.new
   end
 
-  def api
+  def api(server_name = default_server)
     api = MySelf::Api.new
-    api.server = server
-    api.user = user_id
-    api.password = user_password
+    api.server = server_name
+    if server(server_name)
+      api.user = server(server_name).user_id
+      api.password = server(server_name).user_password
+    end
     api
   end
 
@@ -25,7 +27,7 @@ class CliController
     self.default_bucket_id = bucket_id
 
     ticket = Ticket.new
-    ticket.server = server
+    ticket.server = default_server
     ticket.bucket_id = bucket_id
     ticket.key = @crypto.generate_passphrase
     ticket.name = name
@@ -49,16 +51,16 @@ class CliController
 
     out.puts("Created token: #{token}")
     out.puts("Use this token to register another client, " +
-             "e.g. with `myer register #{server} #{token}`.")
+             "e.g. with `myer register #{default_server} #{token}`.")
 
     token
   end
 
-  def register(server, token)
+  def register(server_name, token)
     read_state
 
-    self.server = server
-    self.user_id, self.user_password = api.register(token)
+    self.default_server = server_name
+    self.user_id, self.user_password = api(server_name).register(token)
 
     write_state
   end
@@ -175,12 +177,13 @@ class CliController
   end
 
   def list_tickets(show_status: false)
+    read_state
+
     store = TicketStore.new(config_dir)
     out.puts "Available Tickets:"
-    store.tickets_per_server.each do |server,tickets|
+    store.tickets_per_server.each do |server_name,tickets|
       if show_status
-        server_api = api
-        server_api.server = server
+        server_api = api(server_name)
         begin
           server_api.ping
           status = " [pings]"
@@ -188,7 +191,7 @@ class CliController
           status = " [ping error: #{e.message.chomp}]"
         end
       end
-      out.puts "  Server '#{server}'#{status}:"
+      out.puts "  Server '#{server_name}'#{status}:"
       tickets.each do |ticket|
         out.puts "    Bucket '#{ticket.name}' (#{ticket.bucket_id})"
       end

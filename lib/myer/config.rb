@@ -8,28 +8,56 @@ module Myer
 
     attr_accessor :config_dir
 
-    attr_accessor :server
-    attr_accessor :admin_id, :password, :default_bucket_id
-    attr_accessor :user_id, :user_password
-
     def initialize_config
       @config_dir = config.home.to_s
     end
 
+    class ServerConfig
+      attr_accessor :admin_id, :admin_password
+      attr_accessor :user_id, :user_password
+      attr_accessor :default_bucket_id
+
+      def initialize(yaml)
+        @admin_id = yaml["admin_id"]
+        @admin_password = yaml["admin_password"]
+        @user_id = yaml["user_id"]
+        @user_password = yaml["user_password"]
+        @default_bucket_id = yaml["default_bucket_id"]
+      end
+    end
+
+    def default_server=(value)
+      @config ||= {}
+      @config["default_server"] = value
+    end
+
+    def default_server
+      @config["default_server"]
+    end
+
+    def self.define_attribute(name)
+      define_method(name.to_s) do
+        return nil if !@config
+        @config["servers"][default_server][name.to_s]
+      end
+
+      define_method(name.to_s + "=") do |value|
+        @config ||= {}
+        @config["servers"] ||= {}
+        @config["servers"][default_server] ||= {}
+        @config["servers"][default_server][name.to_s] = value
+      end
+    end
+
+    define_attribute :admin_id
+    define_attribute :admin_password
+    define_attribute :user_id
+    define_attribute :user_password
+    define_attribute :default_bucket_id
+
     def write_state
       FileUtils.mkdir_p(@config_dir)
-      state = {
-        "default_server" => server,
-        server => {
-          "admin_id" => admin_id, "password" => password
-        }
-      }
-      state[server]["user_id"] = user_id if user_id
-      state[server]["user_password"] = user_password if user_password
-      if default_bucket_id
-        state[server]["default_bucket_id"] = default_bucket_id
-      end
-      File.write(File.join(@config_dir, "myer.config"), state.to_yaml)
+      File.write(File.join(@config_dir, "myer.config"), @config.to_yaml)
     end
 
     def read_state
@@ -37,15 +65,18 @@ module Myer
       return if !File.exist?(config_file)
 
       state = YAML.load_file(config_file)
+      @config = state
 
-      self.server = state["default_server"]
-      server_state = state[server]
+      @default_server = @config["default_server"]
+    end
 
-      self.admin_id = server_state["admin_id"]
-      self.password = server_state["password"]
-      self.user_id = server_state["user_id"]
-      self.user_password = server_state["user_password"]
-      self.default_bucket_id = server_state["default_bucket_id"]
+    def servers
+      @config["servers"].keys
+    end
+
+    def server(name)
+      return nil if !@config["servers"] || !@config["servers"].has_key?(name)
+      ServerConfig.new(@config["servers"][name])
     end
   end
 end

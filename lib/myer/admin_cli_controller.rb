@@ -8,17 +8,19 @@ class AdminCliController
     initialize_config
   end
 
-  def api
+  def api(server_name = default_server)
     api = MySelf::Api.new
-    api.server = server
-    api.user = admin_id
-    api.password = password
+    api.server = server_name
+    if server(server_name)
+      api.user = server(server_name).admin_id
+      api.password = server(server_name).admin_password
+    end
     api
   end
 
-  def register(server, pid)
-    self.server = server
-    self.admin_id, self.password = api.admin_register(pid)
+  def register(server_name, pid)
+    self.default_server = server_name
+    self.admin_id, self.admin_password = api(server_name).admin_register(pid)
 
     write_state
   end
@@ -53,8 +55,8 @@ class AdminCliController
   def status
     read_state
 
-    out.puts "Server: #{server}"
-    out.puts "Bucket: #{default_bucket_id}"
+    out.puts "Default server: #{default_server}"
+    out.puts "Default bucket: #{default_bucket_id}"
   end
 
   def register_user
