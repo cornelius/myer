@@ -41,6 +41,7 @@ describe CliController do
       expect(config["example.org"]["default_bucket_id"]).to eq bucket_id
 
       json = JSON.parse(File.read(ticket_file_path))
+      expect(json["server"]).to eq "example.org"
       expect(json["name"]).to eq "Test Data"
       expect(json["bucket_id"]).to eq expected_bucket_id
     end
@@ -271,6 +272,27 @@ EOT
       expect(File.read(ticket_target_path)).to eq ticket_content
 
       expect(@controller.default_bucket_id).to eq(YAML.load(ticket_content)["bucket_id"])
+    end
+  end
+
+  describe "#list_tickets" do
+    it "lists tickets" do
+      @controller.config_dir = given_directory do
+        given_file("secret-ticket-12345678.json")
+        given_file("secret-ticket-987654321.json")
+      end
+
+      @controller.out = StringIO.new
+
+      @controller.list_tickets
+
+      expect(@controller.out.string).to eq <<EOT
+Available Tickets:
+  Server 'mycroft.example.org':
+    Bucket 'Test Data' (12345678)
+  Server 'localhost':
+    Bucket 'Test Data' (987654321)
+EOT
     end
   end
 end

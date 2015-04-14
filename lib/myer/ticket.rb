@@ -1,3 +1,3 @@
 class Ticket
-  attr_accessor :name, :bucket_id, :key
+  attr_accessor :server, :name, :bucket_id, :key
 end

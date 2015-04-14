@@ -23,6 +23,7 @@ class TicketStore
     if json["bucket_id"] != bucket_id
       raise "Invalid ticket #{ticket_path(ticket)}. File name doesn't match bucket id"
     end
+    ticket.server = json["server"]
     ticket.key = json["key"]
     ticket.name = json["name"]
     ticket
@@ -31,14 +32,26 @@ class TicketStore
   def load_ticket_from_file(ticket_path)
     json = JSON.parse(File.read(ticket_path))
     ticket = Ticket.new
+    ticket.server = json["server"]
     ticket.bucket_id = json["bucket_id"]
     ticket.key = json["key"]
     ticket.name = json["name"]
     ticket
   end
 
+  def tickets_per_server
+    tickets = {}
+    Dir.glob("#{@ticket_dir}/secret-ticket-*.json").each do |path|
+      ticket = load_ticket_from_file(path)
+      tickets[ticket.server] ||= []
+      tickets[ticket.server].push(ticket)
+    end
+    tickets
+  end
+
   def save_ticket(ticket)
-    json = { "name" => ticket.name, "bucket_id" => ticket.bucket_id,
+    json = { "server" => ticket.server, "name" => ticket.name,
+             "bucket_id" => ticket.bucket_id,
              "key" => ticket.key }
     File.open(ticket_path(ticket), "w", 0600) do |f|
       f.write(JSON.generate(json))

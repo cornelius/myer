@@ -187,4 +187,10 @@ command :consume_ticket do |c|
   end
 end
 
+desc "List tickets"
+command :list_tickets do |c|
+  c.action do
+    CliController.new.list_tickets
+  end
+end
 exit run(ARGV)

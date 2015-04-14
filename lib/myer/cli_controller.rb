@@ -25,6 +25,7 @@ class CliController
     self.default_bucket_id = bucket_id
 
     ticket = Ticket.new
+    ticket.server = server
     ticket.bucket_id = bucket_id
     ticket.key = @crypto.generate_passphrase
     ticket.name = name
@@ -171,5 +172,16 @@ class CliController
     self.default_bucket_id = ticket.bucket_id
 
     write_state
+  end
+
+  def list_tickets
+    store = TicketStore.new(config_dir)
+    out.puts "Available Tickets:"
+    store.tickets_per_server.each do |server,tickets|
+      out.puts "  Server '#{server}':"
+      tickets.each do |ticket|
+        out.puts "    Bucket '#{ticket.name}' (#{ticket.bucket_id})"
+      end
+    end
   end
 end
