@@ -149,7 +149,7 @@ describe CliController do
 
       expect(@controller).to receive(:read_items).
         with("987654321").
-        and_return(['{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}'])
+        and_return(['{"data":"2014-06-03,37"}','{"data":"2014-06-04,39"}'])
 
       @controller.read
 
@@ -235,7 +235,7 @@ EOT
 
       output_path = File.join(given_directory, "export.json")
 
-      expect(@controller).to receive(:read_items).and_return(['{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}','{"data":"My Data","tag":"title"}'])
+      expect(@controller).to receive(:read_items).and_return(['{"tag":"type","data":"json"}','{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}','{"data":"My Data","tag":"title"}'])
 
       @controller.export(output_path)
 
