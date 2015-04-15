@@ -1,3 +1,4 @@
 Gemfile.lock
 results.html
 coverage
+*.gem
