@@ -150,18 +150,10 @@ class CliController
   def plot
     read_config
 
-    csv_file = Tempfile.new("myer_plot_data")
-    content = Content.new
-
-    inner_items = read
-    inner_items.each do |inner_item|
-      content.add(inner_item)
-    end
-
-    content.write_as_csv(csv_file.path)
+    read
 
     plot = Plot.new
-    plot.show(csv_file.path)
+    plot.show(local_csv_path(default_bucket_id))
   end
 
   def export(output_path)
