@@ -210,7 +210,7 @@ EOT
   end
 
   describe "#plot" do
-    it "plots pairs of date and value" do
+    it "reads data from server and plots pairs of date and value" do
       @controller.data_dir = given_directory
       @controller.config_dir = given_directory do
         given_file("myer.config")
@@ -222,6 +222,14 @@ EOT
       expect_any_instance_of(Plot).to receive(:show)
 
       @controller.plot
+    end
+
+    it "reads data from local file and plots it" do
+      expect(@controller).to_not receive(:read_items)
+
+      expect_any_instance_of(Plot).to receive(:show)
+
+      @controller.plot(dont_sync: true)
     end
   end
 

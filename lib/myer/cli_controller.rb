@@ -147,10 +147,10 @@ class CliController
     write_value(JSON.generate(json))
   end
 
-  def plot
+  def plot(dont_sync: false)
     read_config
 
-    read
+    read unless dont_sync
 
     plot = Plot.new
     plot.show(local_csv_path(default_bucket_id))

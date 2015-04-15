@@ -166,8 +166,9 @@ end
 
 desc "Plot data"
 command :plot do |c|
-  c.action do
-    CliController.new.plot
+  c.switch :dont_sync, desc: "Don't sync data from server"
+  c.action do |_, options, _|
+    CliController.new.plot(dont_sync: options[:dont_sync])
   end
 end
 
