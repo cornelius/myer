@@ -140,6 +140,26 @@ describe CliController do
         @controller.read
       }.to raise_error(Myer::Error)
     end
+
+    it "writes read data to local file" do
+      @controller.data_dir = given_directory
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      expect(@controller).to receive(:read_items).
+        with("987654321").
+        and_return(['{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}'])
+
+      @controller.read
+
+      expect(File.read(File.join(@controller.data_dir,
+                                 @controller.default_bucket_id + ".csv"))).
+        to eq <<EOT
+2014-06-03,37
+2014-06-04,39
+EOT
+    end
   end
 
   describe "#write_value" do
@@ -191,6 +211,7 @@ describe CliController do
 
   describe "#plot" do
     it "plots pairs of date and value" do
+      @controller.data_dir = given_directory
       @controller.config_dir = given_directory do
         given_file("myer.config")
         given_file("secret-ticket-987654321.json")
@@ -206,6 +227,7 @@ describe CliController do
 
   describe "#export" do
     it "exports read data as JSON" do
+      @controller.data_dir = given_directory
       @controller.config_dir = given_directory do
         given_file("myer.config")
         given_file("secret-ticket-987654321.json")

@@ -6,10 +6,11 @@ module Myer
       "myer"
     end
 
-    attr_accessor :config_dir
+    attr_accessor :config_dir, :data_dir
 
     def initialize_config
       @config_dir = config.home.to_s
+      @data_dir = data.home.to_s
     end
 
     class ServerConfig

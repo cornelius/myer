@@ -114,7 +114,19 @@ class CliController
     if !default_bucket_id || default_bucket_id.empty?
       raise Myer::Error.new("Default bucket id not set")
     end
-    read_items(default_bucket_id)
+    inner_items = read_items(default_bucket_id)
+
+    FileUtils.mkdir_p(data_dir)
+    csv_file = File.join(data_dir, default_bucket_id + ".csv")
+    content = Content.new
+
+    inner_items.each do |inner_item|
+      content.add(inner_item)
+    end
+
+    content.write_as_csv(csv_file)
+
+    inner_items
   end
 
   def create_payload(value, tag = nil)

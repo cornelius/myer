@@ -1,9 +1,25 @@
 class Content
   class Item
-    attr_accessor :id, :written_at, :tag, :data
+    attr_accessor :id, :written_at, :tag
+
+    def initialize(container)
+      @container = container
+    end
+
+    def data=(value)
+      @data = value
+    end
+
+    def data
+      if @container.type == "json"
+        JSON.parse(@data)
+      else
+        @data
+      end
+    end
   end
 
-  attr_reader :title
+  attr_reader :title, :type
 
   def initialize
     @items = []
@@ -12,14 +28,16 @@ class Content
   def add(content)
     json = JSON.parse(content)
 
-    item = Item.new
+    item = Item.new(self)
     item.id = json["id"]
     item.written_at = json["written_at"]
     item.tag = json["tag"]
     if item.tag == "title"
       @title = json["data"]
+    elsif item.tag == "type"
+      @type = json["data"]
     else
-      item.data = JSON.parse(json["data"])
+      item.data = json["data"]
       @items.push(item)
     end
   end
@@ -43,7 +61,11 @@ class Content
   def write_as_csv(output_path)
     File.open(output_path, "w") do |file|
       @items.each do |item|
-        file.puts(item.data.join(","))
+        if type == "json"
+          file.puts(item.data.join(","))
+        else
+          file.puts(item.data)
+        end
       end
     end
   end
