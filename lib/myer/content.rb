@@ -24,8 +24,20 @@ class Content
     end
   end
 
-  def all
-    @items
+  def first
+    at(0)
+  end
+
+  def at(index)
+    @items.at(index)
+  end
+
+  def empty?
+    @items.empty?
+  end
+
+  def length
+    @items.length
   end
 
   def write_as_csv(output_path)

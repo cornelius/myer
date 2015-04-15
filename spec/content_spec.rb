@@ -12,7 +12,7 @@ describe Content do
   it "parses item" do
     @content.add('{"id":"63705782","written_at":"2014-10-24T12:53:17Z","data":"[\"2014-06-02\",\"37\"]"}')
 
-    item = @content.all.first
+    item = @content.first
 
     expect(item.id).to eq "63705782"
     expect(item.written_at).to eq "2014-10-24T12:53:17Z"
@@ -22,7 +22,7 @@ describe Content do
   it "receives title" do
     @content.add('{"id":"15938189","written_at":"2014-10-24T12:52:42Z","tag":"title","data":"My Title"}')
 
-    expect(@content.all.empty?).to be true
+    expect(@content.empty?).to be true
     expect(@content.title).to eq "My Title"
   end
 
@@ -30,9 +30,9 @@ describe Content do
     @content.add('{"id":"92285309","written_at":"2014-10-24T12:53:38Z","data":"[\"2014-06-03\",\"37\"]"}')
     @content.add('{"id":"63758143","written_at":"2014-10-24T12:53:49Z","data":"[\"2014-06-04\",\"39\"]"}')
 
-    expect(@content.all.length).to eq 2
-    expect(@content.all[0].data[1]).to eq "37"
-    expect(@content.all[1].data[1]).to eq "39"
+    expect(@content.length).to eq 2
+    expect(@content.at(0).data[1]).to eq "37"
+    expect(@content.at(1).data[1]).to eq "39"
   end
 
   it "writes data as CSV" do
