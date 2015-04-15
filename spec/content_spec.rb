@@ -48,4 +48,18 @@ describe Content do
 EOT
     )
   end
+
+  it "writes data as JSON" do
+    @content.add('{"id":"15938189","written_at":"2014-10-24T12:52:42Z","tag":"title","data":"My Title"}')
+    @content.add('{"data":"[\"2014-06-03\",\"37\"]"}')
+    @content.add('{"data":"[\"2014-06-04\",\"39\"]"}')
+
+    output_path = given_dummy_file
+
+    expected_json = "{\"title\":\"My Title\",\"data\":[{\"date\":\"2014-06-03\",\"value\":\"37\"},{\"date\":\"2014-06-04\",\"value\":\"39\"}]}"
+
+
+    @content.write_as_json(output_path)
+    expect(File.read(output_path)).to eq(expected_json)
+  end
 end
