@@ -13,6 +13,10 @@ module Myer
       @data_dir = data.home.to_s
     end
 
+    def local_csv_path(bucket_id)
+      File.join(@data_dir, bucket_id + ".csv")
+    end
+
     class ServerConfig
       attr_accessor :admin_id, :admin_password
       attr_accessor :user_id, :user_password

@@ -117,7 +117,7 @@ class CliController
     inner_items = read_items(default_bucket_id)
 
     FileUtils.mkdir_p(data_dir)
-    csv_file = File.join(data_dir, default_bucket_id + ".csv")
+    csv_file = local_csv_path(default_bucket_id)
     content = Content.new
 
     inner_items.each do |inner_item|

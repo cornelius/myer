@@ -9,6 +9,20 @@ end
 describe Myer::Config do
   use_given_filesystem
 
+  describe "#local_csv_path" do
+    before(:each) do
+      @config = MyConfig.new
+      @config.config_dir = given_directory
+    end
+
+    it "constructs path from bucket id" do
+      @config.data_dir = given_directory
+
+      expect(@config.local_csv_path("x7326")).
+        to eq(File.join(@config.data_dir, "x7326.csv"))
+    end
+  end
+
   describe "#write_config" do
     before(:each) do
       @config = MyConfig.new
