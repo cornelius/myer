@@ -210,8 +210,11 @@ EOT
   end
 
   describe "#plot" do
-    it "reads data from server and plots pairs of date and value" do
+    before(:each) do
       @controller.data_dir = given_directory
+    end
+
+    it "reads data from server and plots pairs of date and value" do
       @controller.config_dir = given_directory do
         given_file("myer.config")
         given_file("secret-ticket-987654321.json")
