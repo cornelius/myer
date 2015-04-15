@@ -212,14 +212,13 @@ EOT
   describe "#plot" do
     before(:each) do
       @controller.data_dir = given_directory
-    end
-
-    it "reads data from server and plots pairs of date and value" do
       @controller.config_dir = given_directory do
         given_file("myer.config")
         given_file("secret-ticket-987654321.json")
       end
+    end
 
+    it "reads data from server and plots pairs of date and value" do
       expect(@controller).to receive(:read_items).and_return(['{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}'])
 
       expect_any_instance_of(Plot).to receive(:show)
