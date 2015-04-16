@@ -153,7 +153,7 @@ describe CliController do
 
       @controller.read
 
-      expect(File.read(File.join(@controller.data_dir,
+      expect(File.read(File.join(@controller.data_dir, "buckets",
                                  @controller.default_bucket_id + ".csv"))).
         to eq <<EOT
 2014-06-03,37
@@ -175,7 +175,7 @@ EOT
 
       expected_json = '{"title":null,"data":[{"date":"2014-06-03","value":"37"},{"date":"2014-06-04","value":"39"}]}'
 
-      expect(File.read(File.join(@controller.data_dir,
+      expect(File.read(File.join(@controller.data_dir, "buckets",
                                  @controller.default_bucket_id + ".json"))).
         to eq(expected_json)
     end
@@ -192,7 +192,7 @@ EOT
 
       @controller.read
 
-      expect(File.exist?(File.join(@controller.data_dir,
+      expect(File.exist?(File.join(@controller.data_dir, "buckets",
         @controller.default_bucket_id + ".json"))).to be(false)
     end
   end

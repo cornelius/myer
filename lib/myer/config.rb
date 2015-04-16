@@ -13,12 +13,16 @@ module Myer
       @data_dir = data.home.to_s
     end
 
+    def local_buckets_dir
+      File.join(@data_dir, "buckets")
+    end
+
     def local_csv_path(bucket_id)
-      File.join(@data_dir, bucket_id + ".csv")
+      File.join(local_buckets_dir, bucket_id + ".csv")
     end
 
     def local_json_path(bucket_id)
-      File.join(@data_dir, bucket_id + ".json")
+      File.join(local_buckets_dir, bucket_id + ".json")
     end
 
     class ServerConfig

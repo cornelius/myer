@@ -116,7 +116,7 @@ class CliController
     end
     inner_items = read_items(default_bucket_id)
 
-    FileUtils.mkdir_p(data_dir)
+    FileUtils.mkdir_p(local_buckets_dir)
     csv_file = local_csv_path(default_bucket_id)
     json_file = local_json_path(default_bucket_id)
     content = Content.new

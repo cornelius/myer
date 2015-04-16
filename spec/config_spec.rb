@@ -19,7 +19,7 @@ describe Myer::Config do
       @config.data_dir = given_directory
 
       expect(@config.local_csv_path("x7326")).
-        to eq(File.join(@config.data_dir, "x7326.csv"))
+        to eq(File.join(@config.data_dir, "buckets/x7326.csv"))
     end
   end
 
@@ -33,7 +33,7 @@ describe Myer::Config do
       @config.data_dir = given_directory
 
       expect(@config.local_json_path("x7326")).
-        to eq(File.join(@config.data_dir, "x7326.json"))
+        to eq(File.join(@config.data_dir, "buckets/x7326.json"))
     end
   end
 
