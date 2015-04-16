@@ -17,6 +17,10 @@ module Myer
       File.join(@data_dir, bucket_id + ".csv")
     end
 
+    def local_json_path(bucket_id)
+      File.join(@data_dir, bucket_id + ".json")
+    end
+
     class ServerConfig
       attr_accessor :admin_id, :admin_password
       attr_accessor :user_id, :user_password

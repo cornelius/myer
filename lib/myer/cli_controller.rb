@@ -118,6 +118,7 @@ class CliController
 
     FileUtils.mkdir_p(data_dir)
     csv_file = local_csv_path(default_bucket_id)
+    json_file = local_json_path(default_bucket_id)
     content = Content.new
 
     inner_items.each do |inner_item|
@@ -125,6 +126,9 @@ class CliController
     end
 
     content.write_as_csv(csv_file)
+    if content.type == "json"
+      content.write_as_json(json_file)
+    end
 
     inner_items
   end

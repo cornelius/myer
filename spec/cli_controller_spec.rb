@@ -141,7 +141,7 @@ describe CliController do
       }.to raise_error(Myer::Error)
     end
 
-    it "writes read data to local file" do
+    it "writes read data to local csv file" do
       @controller.data_dir = given_directory
       @controller.config_dir = given_directory do
         given_file("myer.config")
@@ -159,6 +159,41 @@ describe CliController do
 2014-06-03,37
 2014-06-04,39
 EOT
+    end
+
+    it "writes read data to local json file if type is json" do
+      @controller.data_dir = given_directory
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      expect(@controller).to receive(:read_items).
+        with("987654321").
+        and_return(['{"tag":"type","data":"json"}','{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}'])
+
+      @controller.read
+
+      expected_json = '{"title":null,"data":[{"date":"2014-06-03","value":"37"},{"date":"2014-06-04","value":"39"}]}'
+
+      expect(File.read(File.join(@controller.data_dir,
+                                 @controller.default_bucket_id + ".json"))).
+        to eq(expected_json)
+    end
+
+    it "doesn't write read data to local json file if type is not json" do
+      @controller.data_dir = given_directory
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      expect(@controller).to receive(:read_items).
+        with("987654321").
+        and_return(['{"data":"2014-06-03,37"}','{"data":"2014-06-04,39"}'])
+
+      @controller.read
+
+      expect(File.exist?(File.join(@controller.data_dir,
+        @controller.default_bucket_id + ".json"))).to be(false)
     end
   end
 
