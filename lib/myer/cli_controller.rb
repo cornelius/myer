@@ -44,6 +44,14 @@ class CliController
     bucket_id
   end
 
+  def set_default_bucket(bucket_id)
+    read_config
+
+    self.default_bucket_id = bucket_id
+
+    write_config
+  end
+
   def create_token
     read_config
 

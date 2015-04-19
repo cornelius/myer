@@ -402,4 +402,26 @@ Available Tickets:
 EOT
     end
   end
+
+  describe "#set_default_bucket" do
+    it "changes default bucket" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config", from: "myer-full.config")
+      end
+
+      @controller.set_default_bucket("newdfb")
+
+      @controller.read_config
+      expect(@controller.default_bucket_id).to eq("newdfb")
+    end
+
+    it "sets new default bucket" do
+      @controller.config_dir = given_directory
+
+      @controller.set_default_bucket("newdfb")
+
+      @controller.read_config
+      expect(@controller.default_bucket_id).to eq("newdfb")
+    end
+  end
 end

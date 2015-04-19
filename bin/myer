@@ -111,6 +111,14 @@ command :create_bucket do |c|
   end
 end
 
+desc "Set default bucket"
+arg :bucket_id
+command :set_default_bucket do |c|
+  c.action do |_, _, args|
+    CliController.new.set_default_bucket(args[0])
+  end
+end
+
 desc "Create token"
 command :create_token do |c|
   c.action do
