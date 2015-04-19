@@ -127,7 +127,7 @@ class CliController
     FileUtils.mkdir_p(local_buckets_dir)
     csv_file = local_csv_path(default_bucket_id)
     json_file = local_json_path(default_bucket_id)
-    content = Content.new
+    content = Content.new(default_bucket_id)
 
     inner_items.each do |inner_item|
       content.add(inner_item)
@@ -171,7 +171,7 @@ class CliController
   def export(output_path)
     read_config
 
-    content = Content.new
+    content = Content.new(default_bucket_id)
     inner_items = read
     inner_items.each do |inner_item|
       content.add(inner_item)

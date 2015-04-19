@@ -19,9 +19,11 @@ class Content
     end
   end
 
-  attr_reader :title, :type
+  attr_reader :title, :type, :bucket_id
 
-  def initialize
+  def initialize(bucket_id)
+    @bucket_id = bucket_id
+
     @items = []
   end
 
@@ -72,6 +74,7 @@ class Content
 
   def write_as_json(output_path)
     json = {}
+    json["bucket_id"] = bucket_id
     json["title"] = title
 
     data_array = []
@@ -86,7 +89,7 @@ class Content
     json["data"] = data_array
 
     File.open(output_path, "w") do |file|
-      file.write(json.to_json)
+      file.write(JSON.pretty_generate(json))
     end
   end
 end

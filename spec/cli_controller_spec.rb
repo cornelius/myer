@@ -173,11 +173,26 @@ EOT
 
       @controller.read
 
-      expected_json = '{"title":null,"data":[{"date":"2014-06-03","value":"37"},{"date":"2014-06-04","value":"39"}]}'
+      expected_json = <<EOT
+{
+  "bucket_id": "987654321",
+  "title": null,
+  "data": [
+    {
+      "date": "2014-06-03",
+      "value": "37"
+    },
+    {
+      "date": "2014-06-04",
+      "value": "39"
+    }
+  ]
+}
+EOT
 
       expect(File.read(File.join(@controller.data_dir, "buckets",
                                  @controller.default_bucket_id + ".json"))).
-        to eq(expected_json)
+        to eq(expected_json.chomp)
     end
 
     it "doesn't write read data to local json file if type is not json" do
@@ -285,7 +300,20 @@ EOT
       @controller.export(output_path)
 
       expected_data = <<EOT
-{"title":"My Data","data":[{"date":"2014-06-03","value":"37"},{"date":"2014-06-04","value":"39"}]}
+{
+  "bucket_id": "987654321",
+  "title": "My Data",
+  "data": [
+    {
+      "date": "2014-06-03",
+      "value": "37"
+    },
+    {
+      "date": "2014-06-04",
+      "value": "39"
+    }
+  ]
+}
 EOT
 
       expect(File.read(output_path)).to eq(expected_data.chomp)
