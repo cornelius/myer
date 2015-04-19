@@ -33,8 +33,8 @@ class AdminCliController
     store = TicketStore.new(config_dir)
     buckets.each do |bucket_id|
       line = bucket_id + ": "
-      ticket = store.load_ticket(bucket_id)
-      if ticket
+      if store.has_ticket?(bucket_id)
+        ticket = store.load_ticket(bucket_id)
         line += ticket.name || "<no name>"
       else
         line += "<no ticket>"

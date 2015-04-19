@@ -94,4 +94,42 @@ EOT
     )
     expect(File.stat(ticket_path).mode).to eq 0100600
   end
+
+  describe "#has_ticket?" do
+    before(:each) do
+      ticket_dir = given_directory do
+        given_file("secret-ticket-12345678.json")
+      end
+
+      @store = TicketStore.new(ticket_dir)
+    end
+
+    it "returns true if ticket exists" do
+      expect(@store.has_ticket?("12345678")).to be(true)
+    end
+
+    it "returns false if ticket does not exist" do
+      expect(@store.has_ticket?("xxxxxxxx")).to be(false)
+    end
+  end
+
+  describe "ticket_path" do
+    before(:each) do
+      @ticket_dir = given_directory
+      @store = TicketStore.new(@ticket_dir)
+    end
+
+    it "returns path for ticket" do
+      ticket = Ticket.new
+      ticket.bucket_id = "123"
+
+      expect(@store.ticket_path(ticket)).
+        to eq(File.join(@ticket_dir, "secret-ticket-123.json"))
+    end
+
+    it "returns path for bucket id" do
+      expect(@store.ticket_path("123")).
+        to eq(File.join(@ticket_dir, "secret-ticket-123.json"))
+    end
+  end
 end

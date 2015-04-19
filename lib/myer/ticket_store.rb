@@ -7,8 +7,17 @@ class TicketStore
     "secret-ticket-#{bucket_id}.json"
   end
 
-  def ticket_path(ticket)
-    File.join(@ticket_dir, ticket_file_name(ticket.bucket_id))
+  def ticket_path(arg)
+    if arg.is_a?(Ticket)
+      bucket_id = arg.bucket_id
+    else
+      bucket_id = arg
+    end
+    File.join(@ticket_dir, ticket_file_name(bucket_id))
+  end
+
+  def has_ticket?(bucket_id)
+    File.exist?(ticket_path(bucket_id))
   end
 
   def load_ticket(bucket_id)
