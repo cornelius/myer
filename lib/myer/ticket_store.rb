@@ -17,7 +17,7 @@ class TicketStore
     begin
       ticket_content = File.read(ticket_path(ticket))
     rescue Errno::ENOENT
-      return nil
+      raise Myer::Error.new("Unable to find ticket for bucket '#{bucket_id}'")
     end
     json = JSON.parse(ticket_content)
     if json["bucket_id"] != bucket_id

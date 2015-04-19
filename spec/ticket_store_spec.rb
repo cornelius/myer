@@ -44,6 +44,12 @@ describe TicketStore do
     }.to raise_error
   end
 
+  it "raises exception if ticket doesn't exist" do
+    expect {
+      TicketStore.new(given_directory).load_ticket("nonexisting")
+    }.to raise_error Myer::Error
+  end
+
   it "loads all tickets" do
     ticket_dir = given_directory do
       given_file("secret-ticket-12345678.json")
