@@ -39,9 +39,14 @@ describe TicketStore do
   end
 
   it "raises exception on load of invalid ticket" do
+    ticket_file = ""
+    ticket_dir = given_directory do
+      ticket_file = given_dummy_file
+    end
+
     expect {
-      TicketStore.new.load_ticket(given_dummy_file)
-    }.to raise_error
+      TicketStore.new(ticket_dir).load_ticket(ticket_file)
+    }.to raise_error Myer::Error
   end
 
   it "raises exception if ticket doesn't exist" do
