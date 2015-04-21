@@ -50,7 +50,7 @@ module Myer
 
     def self.define_attribute(name)
       define_method(name.to_s) do
-        return nil if !@config
+        return nil if !@config || !@config["servers"]
         @config["servers"][default_server][name.to_s]
       end
 

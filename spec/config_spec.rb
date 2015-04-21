@@ -127,4 +127,16 @@ describe Myer::Config do
       end
     end
   end
+
+  describe "#default_bucket_id" do
+    it "returns nil on missing servers attribute" do
+      config = MyConfig.new
+      config.config_dir = given_directory do
+        given_file("myer.config", from: "myer-old.config")
+      end
+      config.read_config
+
+      expect(config.default_bucket_id).to be(nil)
+    end
+  end
 end
