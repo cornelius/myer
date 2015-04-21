@@ -152,7 +152,7 @@ arg :value
 command :write_value do |c|
   c.flag :tag, desc: "Add tag as meta data"
   c.action do |global_options, options, args|
-    CliController.new.write_value(args[0], options[:tag])
+    CliController.new.write_value(args[0], tag: options[:tag])
   end
 end
 
@@ -162,6 +162,14 @@ arg :value2
 command :write_pair do |c|
   c.action do |global_options, options, args|
     CliController.new.write_pair(args[0], args[1])
+  end
+end
+
+desc "Remove item"
+arg :id
+command :remove_item do |c|
+  c.action do |_, _, args|
+    CliController.new.remove_item(args[0])
   end
 end
 

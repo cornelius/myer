@@ -141,22 +141,28 @@ class CliController
     inner_items
   end
 
-  def create_payload(value, tag = nil)
+  def create_payload(value, tag: nil, id: nil)
     payload = {}
-    payload["id"] = SecureRandom.hex
+    payload["id"] = id || SecureRandom.hex
     payload["written_at"] = Time.now.utc.strftime("%FT%TZ")
     payload["tag"] = tag if tag
     payload["data"] = value.to_s
     JSON.generate(payload)
   end
 
-  def write_value(value, tag = nil)
-    write(create_payload(value, tag))
+  def write_value(value, tag: nil, id: nil)
+    write(create_payload(value, tag: tag, id: id))
   end
 
   def write_pair(value1, value2)
     json = [ value1, value2 ]
     write_value(JSON.generate(json))
+  end
+
+  def remove_item(id)
+    read_config
+
+    write_value("", id: id)
   end
 
   def plot(dont_sync: false)

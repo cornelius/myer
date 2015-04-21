@@ -11,7 +11,7 @@ class Content
     end
 
     def data
-      if @container.type == "json"
+      if @container.type == "json" && @data != ""
         JSON.parse(@data)
       else
         @data
@@ -24,7 +24,7 @@ class Content
   def initialize(bucket_id)
     @bucket_id = bucket_id
 
-    @items = []
+    @items = {}
   end
 
   def add(content)
@@ -40,7 +40,11 @@ class Content
       @type = json["data"]
     else
       item.data = json["data"]
-      @items.push(item)
+      if item.data == ""
+        @items.delete(item.id)
+      else
+        @items[item.id] = item
+      end
     end
   end
 
@@ -49,7 +53,7 @@ class Content
   end
 
   def at(index)
-    @items.at(index)
+    @items[@items.keys.at(index)]
   end
 
   def empty?
@@ -62,7 +66,7 @@ class Content
 
   def write_as_csv(output_path)
     File.open(output_path, "w") do |file|
-      @items.each do |item|
+      @items.each do |id, item|
         if type == "json"
           file.puts(item.data.join(","))
         else
@@ -78,7 +82,7 @@ class Content
     json["title"] = title
 
     data_array = []
-    @items.each do |item|
+    @items.each do |id, item|
       data_item = {}
       data_item["date"] = item.data[0]
       data_item["value"] = item.data[1]

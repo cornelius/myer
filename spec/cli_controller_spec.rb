@@ -149,7 +149,7 @@ describe CliController do
 
       expect(@controller).to receive(:read_items).
         with("987654321").
-        and_return(['{"data":"2014-06-03,37"}','{"data":"2014-06-04,39"}'])
+        and_return(['{"id":"1","data":"2014-06-03,37"}','{"id":"2","data":"2014-06-04,39"}'])
 
       @controller.read
 
@@ -169,7 +169,7 @@ EOT
 
       expect(@controller).to receive(:read_items).
         with("987654321").
-        and_return(['{"tag":"type","data":"json"}','{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}'])
+        and_return(['{"tag":"type","data":"json"}','{"id":"1","data":"[\"2014-06-03\",\"37\"]"}','{"id":"2","data":"[\"2014-06-04\",\"39\"]"}'])
 
       @controller.read
 
@@ -252,10 +252,18 @@ EOT
 
     it "creates payload with tag" do
       value = "some data"
-      payload_string = @controller.create_payload(value, "title")
+      payload_string = @controller.create_payload(value, tag: "title")
       payload = JSON.parse(payload_string)
       expect(payload["tag"]).to eq "title"
       expect(payload["data"]).to eq "some data"
+    end
+
+    it "creates payload with given id" do
+      value = "some data"
+      payload_string = @controller.create_payload(value, id: "v1")
+      payload = JSON.parse(payload_string)
+      expect(payload["data"]).to eq "some data"
+      expect(payload["id"]).to eq "v1"
     end
   end
 
@@ -295,7 +303,7 @@ EOT
 
       output_path = File.join(given_directory, "export.json")
 
-      expect(@controller).to receive(:read_items).and_return(['{"tag":"type","data":"json"}','{"data":"[\"2014-06-03\",\"37\"]"}','{"data":"[\"2014-06-04\",\"39\"]"}','{"data":"My Data","tag":"title"}'])
+      expect(@controller).to receive(:read_items).and_return(['{"tag":"type","data":"json"}','{"data":"[\"2014-06-03\",\"37\"]"}','{"id":"1","data":"[\"2014-06-04\",\"39\"]"}','{"id":"2","data":"My Data","tag":"title"}'])
 
       @controller.export(output_path)
 
@@ -450,6 +458,20 @@ EOT
 
       @controller.read_config
       expect(@controller.default_bucket_id).to eq("newdfb")
+    end
+  end
+
+  describe "#remove_item" do
+    it "removes item" do
+      allow(Time).to receive(:now).and_return(Time.at(120))
+
+      expected_content = <<EOT
+{"id":"xxx111","written_at":"1970-01-01T00:02:00Z","data":""}
+EOT
+
+      expect(@controller).to receive(:write).with(expected_content.chomp)
+
+      @controller.remove_item("xxx111")
     end
   end
 end
