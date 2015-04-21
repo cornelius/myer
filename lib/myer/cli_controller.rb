@@ -52,6 +52,12 @@ class CliController
     write_config
   end
 
+  def get_default_bucket
+    read_config
+
+    out.puts self.default_bucket_id
+  end
+
   def create_token
     read_config
 

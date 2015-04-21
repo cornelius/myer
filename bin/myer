@@ -111,11 +111,19 @@ command :create_bucket do |c|
   end
 end
 
-desc "Set default bucket"
-arg :bucket_id
-command :set_default_bucket do |c|
+desc "Set and get default bucket"
+arg :bucket_id, optional: true
+long_desc <<-LONGDESC
+  Return id of default bucket if no argument is given, or set the default
+  bucket to the given id if the argument is present.
+LONGDESC
+command :default_bucket do |c|
   c.action do |_, _, args|
-    CliController.new.set_default_bucket(args[0])
+    if args[0]
+      CliController.new.set_default_bucket(args[0])
+    else
+      CliController.new.get_default_bucket
+    end
   end
 end
 

@@ -461,6 +461,22 @@ EOT
     end
   end
 
+  describe "#get_default_bucket" do
+    it "returns default bucket" do
+      @controller.config_dir = given_directory do
+        given_file("myer.config", from: "myer-full.config")
+      end
+
+      @controller.out = StringIO.new
+
+      @controller.get_default_bucket
+
+      expect(@controller.out.string).to eq <<EOT
+987654321
+EOT
+    end
+  end
+
   describe "#remove_item" do
     it "removes item" do
       allow(Time).to receive(:now).and_return(Time.at(120))
