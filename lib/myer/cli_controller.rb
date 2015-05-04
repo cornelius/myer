@@ -147,6 +147,22 @@ class CliController
     inner_items
   end
 
+  def show
+    read_config
+    if !default_bucket_id || default_bucket_id.empty?
+      raise Myer::Error.new("Default bucket id not set")
+    end
+
+    json = JSON.parse(File.read(local_json_path(default_bucket_id)))
+
+    out.puts "# #{json["title"]} (Bucket #{json["bucket_id"]})"
+    out.puts
+
+    json["data"].each do |item|
+      out.puts "#{item["date"]}: #{item["value"]}"
+    end
+  end
+
   def create_payload(value, tag: nil, id: nil)
     payload = {}
     payload["id"] = id || SecureRandom.hex

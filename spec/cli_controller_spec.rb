@@ -212,6 +212,38 @@ EOT
     end
   end
 
+  describe "#show" do
+    it "gives an error when bucket is not set" do
+      @controller.config_dir = given_directory
+
+      expect {
+        @controller.show
+      }.to raise_error(Myer::Error)
+    end
+
+    it "shows processed read data" do
+      @controller.data_dir = given_directory do
+        given_directory "buckets" do
+          given_file("987654321.json")
+        end
+      end
+      @controller.config_dir = given_directory do
+        given_file("myer.config")
+      end
+
+      @controller.out = StringIO.new
+
+      @controller.show
+
+      expect(@controller.out.string).to eq <<EOT
+# Bike (Bucket 987654321)
+
+2015-04-22: 40
+2015-04-21: 50
+EOT
+    end
+  end
+
   describe "#write_value" do
     it "writes value" do
       @controller.config_dir = given_directory do

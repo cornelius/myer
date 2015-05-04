@@ -188,6 +188,13 @@ command :read do |c|
   end
 end
 
+desc "Show local items"
+command :show do |c|
+  c.action do
+    CliController.new.show
+  end
+end
+
 desc "Plot data"
 command :plot do |c|
   c.switch :dont_sync, desc: "Don't sync data from server"
